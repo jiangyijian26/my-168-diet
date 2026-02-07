@@ -6,8 +6,8 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="theme-color" content="#4F46E5" />
-  <meta name="description" content="16+8 间歇性断食助手 (Pro版) - 云端同步（Base64 图片）" />
-  <title>Fasting Pro Cloud</title>
+  <meta name="description" content="健康饮食 Pro 1.0 - 科学饮食与间歇性断食助手" />
+  <title>健康饮食 Pro</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -471,16 +471,41 @@
     }
     .meal-media-img img { width:100%; height:auto; display:block; }
     .meal-media-note { font-size: 12px; color: var(--text-sec); font-weight: 700; line-height:1.5; white-space: pre-wrap; }
+
+    /* 庆祝 1.0 启动屏样式 */
+    .launch-splash {
+        position: fixed; inset: 0; z-index: 2000;
+        background: linear-gradient(135deg, #4f46e5, #ec4899);
+        display: flex; flex-direction: column; align-items: center; justify-content: center;
+        color: #fff; text-align: center;
+        opacity: 0; pointer-events: none; transition: opacity 0.6s ease;
+    }
+    .launch-splash.active { opacity: 1; pointer-events: auto; }
+    .launch-title { font-size: 32px; font-weight: 900; margin-bottom: 10px; animation: bounceIn 0.8s; }
+    .launch-sub { font-size: 16px; font-weight: 600; opacity: 0.9; animation: fadeIn 1.2s; }
+    @keyframes bounceIn {
+        0% { transform: scale(0.3); opacity: 0; }
+        50% { transform: scale(1.05); }
+        70% { transform: scale(0.9); }
+        100% { transform: scale(1); opacity: 1; }
+    }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
   </style>
 </head>
 
 <body>
   <canvas id="confetti"></canvas>
 
+  <div class="launch-splash" id="launchSplash">
+      <div style="font-size:60px; margin-bottom:10px;">🎉</div>
+      <div class="launch-title">健康饮食 Pro 1.0</div>
+      <div class="launch-sub">全新升级 · 极速体验 · 科学管理</div>
+  </div>
+
   <div class="container">
     <div class="topbar">
       <div class="brand">
-        <h1>Fasting <span style="font-weight:300">Pro</span><span class="brand-badge">CLOUD</span></h1>
+        <h1>健康饮食 <span style="font-weight:300">Pro</span><span class="brand-badge">CLOUD</span></h1>
       </div>
       <div class="nav-actions">
         <button class="icon-btn" id="themeBtn" title="主题">🌓</button>
@@ -885,12 +910,12 @@
       const particles = [];
       const colors = ['#6366f1', '#10b981', '#f59e0b', '#ef4444'];
 
-      for(let i=0; i<100; i++) {
+      for(let i=0; i<120; i++) {
         particles.push({
           x: canvas.width / 2, y: canvas.height / 2,
-          vx: (Math.random() - 0.5) * 10, vy: (Math.random() - 0.5) * 10 - 5,
+          vx: (Math.random() - 0.5) * 15, vy: (Math.random() - 0.5) * 15 - 8,
           color: colors[Math.floor(Math.random() * colors.length)],
-          life: 100
+          life: 150
         });
       }
 
@@ -899,8 +924,8 @@
         let active = false;
         particles.forEach(p => {
           if(p.life > 0) {
-            p.x += p.vx; p.y += p.vy; p.vy += 0.2; p.life--;
-            ctx.fillStyle = p.color; ctx.fillRect(p.x, p.y, 6, 6);
+            p.x += p.vx; p.y += p.vy; p.vy += 0.3; p.life--;
+            ctx.fillStyle = p.color; ctx.fillRect(p.x, p.y, 7, 7);
             active = true;
           }
         });
@@ -1067,7 +1092,7 @@
         await setDoc(dayDocRef(uid, state.dateKey), payload, { merge: true });
       } catch(e) {
         console.error("Cloud upsert failed", e);
-        showToast('云端保存失败（离线将自动恢复）', '⚠️', 'error');
+        // 静默失败，不打扰用户，下次会重试
       }
     };
 
@@ -1707,7 +1732,7 @@
       try {
         ensureToday();
 
-        // 先写打卡时间（保证时序一致）
+        // 1. 数据校验与准备
         if (which === 'start') {
           if (state.startTime) return showToast('第一餐已打卡，无需重复', 'ℹ️');
           state.startTime = Date.now();
@@ -1722,17 +1747,15 @@
         if (which === 'start') state.startMeal = { ...(state.startMeal||{}), note: msg };
         else state.endMeal = { ...(state.endMeal||{}), note: msg };
 
-        // 图片：压缩 -> Base64
+        // 2. 图片压缩 (CPU 耗时)
         if (pendingFile) {
           const res = await compressImageSmart(pendingFile);
-
           if (!res.blob) {
             showToast('图片处理失败，请重试', '❌', 'error');
+            // 如果压缩失败，可以选择中断或仅忽略图片，这里选择继续但不存图
           } else {
             const b64 = await blobToBase64Raw(res.blob);
-            // 此时压缩力度较大，通常不会超限，但仍保留检查
-            const tooLarge = (b64.length > 800 * 1024); // 800KB base64 约为 600KB 原图，安全线
-
+            const tooLarge = (b64.length > 800 * 1024);
             if (tooLarge) {
               $('mealSizeWarn').style.display = 'block';
               showToast('图片仍过大，无法保存', '⚠️', 'error');
@@ -1741,21 +1764,31 @@
               else state.endMeal = { ...(state.endMeal||{}), imageBase64: b64 };
             }
           }
-
-          if (!currentUser) {
-            showToast('未登录：已先保存在本机', 'ℹ️');
-          }
         }
 
-        await persist();
+        // 3. 乐观更新：先保存本地并刷新 UI (立即响应)
+        state.updatedAt = Date.now();
+        localSave();
+        renderUI();
 
-        toggleMeal(false);
+        toggleMeal(false); // 立即关闭弹窗
         showToast(which === 'start' ? '第一餐打卡完成' : '最后一餐打卡完成', '✅');
         if (which === 'end') fireConfetti();
+
+        // 手动重置 loading 状态
+        btnLoading('mealConfirmBtn', false);
+        btnLoading('mealSkipBtn', false);
+        btnLoading('btnPickImg', false);
+        btnLoading('btnRemoveImg', false);
+
+        // 4. 后台同步
+        cloudUpsertToday().catch(e => {
+            console.error("后台云同步失败 (暂存本地)", e);
+        });
+
       } catch(e) {
         console.error(e);
-        showToast('打卡失败，请重试', '❌', 'error');
-      } finally {
+        showToast('打卡出现异常', '❌', 'error');
         btnLoading('mealConfirmBtn', false);
         btnLoading('mealSkipBtn', false);
         btnLoading('btnPickImg', false);
@@ -1772,6 +1805,43 @@
       else document.documentElement.setAttribute('data-theme', 'light');
     };
     initTheme();
+
+    /* ================= 1.0 庆祝逻辑 ================= */
+    const checkLaunchSplash = () => {
+        const LAUNCH_DATE_KEY = 'launch_seen_date';
+        // 设定发布日期为今天 (动态获取，方便你测试)
+        // 真实上线时可以写死 const START_DATE = new Date('2024-01-01').getTime();
+        const now = Date.now();
+        
+        // 我们设定有效期为发布后 14 天 (2周)
+        // 为了方便演示，我们假设“今天”是发布日
+        // 你可以根据需求修改 START_DATE
+        const START_DATE = new Date().setHours(0,0,0,0) - 1000; // 稍微提前一点点保证包括当下
+        const END_DATE = START_DATE + (14 * 24 * 60 * 60 * 1000); 
+
+        // 1. 检查是否过期
+        if (now > END_DATE) return;
+
+        // 2. 检查今天是否已经看过
+        const todayStr = new Date().toDateString();
+        const lastSeen = localStorage.getItem(LAUNCH_DATE_KEY);
+
+        if (lastSeen !== todayStr) {
+            // 显示庆祝页面
+            const splash = $('launchSplash');
+            splash.classList.add('active');
+            
+            // 触发礼花
+            setTimeout(() => fireConfetti(), 300);
+
+            // 3秒后消失
+            setTimeout(() => {
+                splash.classList.remove('active');
+                // 记录今天已看
+                localStorage.setItem(LAUNCH_DATE_KEY, todayStr);
+            }, 3000);
+        }
+    };
 
     /* ================= 绑定事件 ================= */
     $('themeBtn').onclick = () => {
@@ -2016,6 +2086,9 @@
     ensureToday();
     syncToggleUI();
     renderUI();
+    
+    // 检查是否显示庆祝页面
+    checkLaunchSplash();
 
     setInterval(() => {
       ensureToday();
