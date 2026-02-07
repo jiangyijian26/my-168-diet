@@ -187,7 +187,7 @@
       min-height: 110px;
     }
     .meal-card.active { border-color: var(--primary); box-shadow: 0 0 0 2px var(--primary-glow); }
-    .meal-card.done { border-color: var(--success); opacity: 0.92; }
+    .meal-card.done { border-color: var(--success); opacity: 0.96; }
     .meal-card:active { transform: scale(0.96); }
 
     .meal-emoji { font-size: 32px; margin-bottom: 10px; transition: 0.3s var(--ease-elastic); }
@@ -604,7 +604,6 @@
 
   <div class="overlay" id="overlay"></div>
 
-  <!-- 云同步 -->
   <div class="bottom-sheet" id="authSheet">
     <div class="sheet-head">
       <h2>☁️ 云端同步</h2>
@@ -662,7 +661,6 @@
     </div>
   </div>
 
-  <!-- 近一周 -->
   <div class="bottom-sheet" id="weekSheet">
     <div class="sheet-head">
       <h2>🗓️ 近一周打卡</h2>
@@ -708,7 +706,37 @@
     </div>
   </div>
 
-  <!-- 打卡：上传图片 & 留言 -->
+  <div class="bottom-sheet" id="viewMealSheet">
+    <div class="sheet-head">
+      <h2 id="viewMealTitle">🍳 打卡详情</h2>
+      <button class="sheet-close" id="viewMealClose">&times;</button>
+    </div>
+    
+    <div class="upload-card">
+      <div class="upload-row">
+        <div class="upload-h">🕒 打卡时间</div>
+        <div class="upload-sub" id="viewMealTimeStr" style="font-size:14px; font-weight:700; color:var(--primary);">--:--</div>
+      </div>
+    </div>
+
+    <div class="meal-media-box" style="margin-bottom:12px;">
+      <div class="meal-media-head">
+        <div class="t">📷 图片记录</div>
+      </div>
+      <div class="meal-media-img" id="viewMealImgBox" style="display:block;">
+         <img id="viewMealImgTag" alt="图片" />
+      </div>
+      <div class="upload-sub" id="viewMealNoImg" style="display:none; text-align:center; padding:10px;">暂无图片</div>
+    </div>
+
+    <div class="upload-card">
+       <div class="upload-h" style="margin-bottom:6px;">💬 留言备注</div>
+       <div class="meal-media-note" id="viewMealNoteStr">暂无留言</div>
+    </div>
+
+    <button class="btn btn-outline" id="viewMealOkBtn">关闭</button>
+  </div>
+
   <div class="bottom-sheet" id="mealSheet">
     <div class="sheet-head">
       <h2 id="mealSheetTitle">🍳 打卡</h2>
@@ -772,19 +800,7 @@
       collection, query, orderBy, limit, onSnapshot
     } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-    /*
-      ✅ 建议的 Firestore 规则（Firebase Console -> Firestore -> Rules）：
-      rules_version = '2';
-      service cloud.firestore {
-        match /databases/{database}/documents {
-          match /users/{userId}/{document=**} {
-            allow read, write: if request.auth != null && request.auth.uid == userId;
-          }
-        }
-      }
-    */
-
-    /* ================= 配置区（保留你的 Key，不改动） ================= */
+    /* ================= 配置区 ================= */
     const firebaseConfig = {
       apiKey: "AIzaSyDxikMU7cksuU98yzunytYiLh1JwBWLs1E",
       authDomain: "app-b8dc2.firebaseapp.com",
@@ -909,6 +925,7 @@
     const toggleAuth = (show) => toggleSheet('authSheet', show);
     const toggleWeek = (show) => toggleSheet('weekSheet', show);
     const toggleMeal = (show) => toggleSheet('mealSheet', show);
+    const toggleViewMeal = (show) => toggleSheet('viewMealSheet', show);
 
     /* ================= 本地偏好（功能开关） ================= */
     let prefs = { mealMediaEnabled: false };
@@ -987,7 +1004,6 @@
       water: 0,
       weight: null,
       note: "",
-      // Base64 图片：只存 base64 裸串（不含 data:image... 前缀）
       startMeal: { note: "", imageBase64: "" },
       endMeal: { note: "", imageBase64: "" },
       updatedAt: 0
@@ -1132,30 +1148,34 @@
       }
     };
 
-    /* ================= 图片压缩与 Base64（核心替换点） ================= */
+    /* ================= 图片压缩与 Base64 ================= */
     const fileToImage = async (file) => {
       const url = URL.createObjectURL(file);
       const img = new Image();
       img.decoding = 'async';
       img.src = url;
-      await new Promise((res, rej) => {
-        img.onload = () => res();
-        img.onerror = () => rej(new Error("image load failed"));
-      });
-      // 这里不 revoke，避免 iOS 提前释放导致空白；后续统一 revoke
-      return { img, url };
+      try {
+        await new Promise((res, rej) => {
+          img.onload = () => res();
+          img.onerror = () => rej(new Error("image load failed"));
+        });
+        return { img, url };
+      } catch (e) {
+        URL.revokeObjectURL(url);
+        throw e;
+      }
     };
 
     const canvasToBlob = (canvas, quality) =>
       new Promise((res) => canvas.toBlob(res, 'image/jpeg', quality));
 
-    // 智能压缩：尺寸 + 质量双调节，尽量把 blob 控制在 targetBytes 以内
     const compressImageSmart = async (file, opts = {}) => {
-      const maxSideStart = opts.maxSideStart ?? 1200;
-      const minSide = opts.minSide ?? 780;
-      const qStart = opts.qStart ?? 0.82;
-      const qMin = opts.qMin ?? 0.50;
-      const targetBytes = opts.targetBytes ?? (320 * 1024); // 320KB 目标，更稳
+      // ✅ 优化后的压缩参数：目标 180KB，更激进地控制大小以适应 Firestore
+      const maxSideStart = opts.maxSideStart ?? 1024;
+      const minSide = opts.minSide ?? 600;
+      const qStart = opts.qStart ?? 0.7;
+      const qMin = opts.qMin ?? 0.4;
+      const targetBytes = opts.targetBytes ?? (180 * 1024);
 
       const { img, url } = await fileToImage(file);
       try {
@@ -1166,8 +1186,7 @@
         let quality = qStart;
         let best = null;
 
-        for (let attempt = 0; attempt < 10; attempt++) {
-          // 1) 计算缩放
+        for (let attempt = 0; attempt < 8; attempt++) {
           let nw = w0, nh = h0;
           const scale = Math.min(1, maxSide / Math.max(w0, h0));
           nw = Math.round(w0 * scale);
@@ -1182,25 +1201,21 @@
           const blob = await canvasToBlob(canvas, quality);
           if (!blob) throw new Error("toBlob failed");
 
-          // 记录一个“最好”的备选（哪怕没达标）
           if (!best || blob.size < best.size) best = blob;
 
           if (blob.size <= targetBytes) {
             return { blob, ok: true, size: blob.size };
           }
 
-          // 2) 不达标：优先降质量，再降尺寸
           if (quality > qMin) {
-            quality = Math.max(qMin, quality - 0.08);
+            quality = Math.max(qMin, quality - 0.1);
           } else if (maxSide > minSide) {
-            maxSide = Math.max(minSide, Math.round(maxSide * 0.85));
-            quality = qStart; // 重新给一档质量
+            maxSide = Math.max(minSide, Math.round(maxSide * 0.8));
+            quality = qStart;
           } else {
             break;
           }
         }
-
-        // 实在达不到目标，返回最小的那个 blob（可能仍偏大）
         return { blob: best, ok: false, size: best?.size ?? 0 };
       } finally {
         URL.revokeObjectURL(url);
@@ -1629,6 +1644,35 @@
       toggleMeal(true);
     };
 
+    const showSingleMealDetail = (which) => {
+      const isStart = which === 'start';
+      const time = isStart ? state.startTime : state.endTime;
+      const data = isStart ? (state.startMeal || {}) : (state.endMeal || {});
+
+      if(!time) return;
+
+      $('viewMealTitle').innerText = isStart ? '🍳 第一餐详情' : '🌙 最后一餐详情';
+      $('viewMealTimeStr').innerText = fmtTime(time);
+      
+      const imgTag = $('viewMealImgTag');
+      const noImg = $('viewMealNoImg');
+      const imgBox = $('viewMealImgBox');
+
+      if(data.imageBase64) {
+         imgTag.src = base64ToDataUrl(data.imageBase64);
+         imgBox.style.display = 'block';
+         noImg.style.display = 'none';
+      } else {
+         imgTag.src = '';
+         imgBox.style.display = 'none';
+         noImg.style.display = 'block';
+      }
+
+      $('viewMealNoteStr').innerText = (data.note && data.note.trim()) ? data.note : '暂无留言';
+      
+      toggleViewMeal(true);
+    };
+
     const persist = async () => {
       state.updatedAt = Date.now();
       localSave();
@@ -1678,40 +1722,28 @@
         if (which === 'start') state.startMeal = { ...(state.startMeal||{}), note: msg };
         else state.endMeal = { ...(state.endMeal||{}), note: msg };
 
-        // 图片：压缩 -> Base64 -> 写入 state；登录后再由 cloudUpsert 同步
+        // 图片：压缩 -> Base64
         if (pendingFile) {
-          const res = await compressImageSmart(pendingFile, {
-            maxSideStart: 1200,
-            minSide: 780,
-            qStart: 0.82,
-            qMin: 0.50,
-            targetBytes: 320 * 1024
-          });
+          const res = await compressImageSmart(pendingFile);
 
           if (!res.blob) {
             showToast('图片处理失败，请重试', '❌', 'error');
           } else {
             const b64 = await blobToBase64Raw(res.blob);
+            // 此时压缩力度较大，通常不会超限，但仍保留检查
+            const tooLarge = (b64.length > 800 * 1024); // 800KB base64 约为 600KB 原图，安全线
 
-            // 超限保护：粗略估算 base64 大小（base64 比原始约大 33%）
-            // Firestore 单文档 1MB，上层还有其他字段；这里保守控制在 ~650KB base64 字符以内
-            const tooLarge = (b64.length > 650 * 1024);
             if (tooLarge) {
               $('mealSizeWarn').style.display = 'block';
-              showToast('图片仍偏大，已放弃保存图片（可换更小图片）', '⚠️', 'error');
+              showToast('图片仍过大，无法保存', '⚠️', 'error');
             } else {
               if (which === 'start') state.startMeal = { ...(state.startMeal||{}), imageBase64: b64 };
               else state.endMeal = { ...(state.endMeal||{}), imageBase64: b64 };
-
-              if (!res.ok) {
-                $('mealSizeWarn').style.display = 'block';
-                showToast('图片已强压缩以适配云同步', '🗜️');
-              }
             }
           }
 
           if (!currentUser) {
-            showToast('未登录：已先保存在本机，登录后才会同步', 'ℹ️');
+            showToast('未登录：已先保存在本机', 'ℹ️');
           }
         }
 
@@ -1751,13 +1783,21 @@
 
     $('userBtn').onclick = () => toggleAuth(true);
     $('authClose').onclick = () => toggleAuth(false);
-    $('overlay').onclick = () => { toggleAuth(false); toggleWeek(false); toggleMeal(false); };
+    $('overlay').onclick = () => { 
+        toggleAuth(false); toggleWeek(false); toggleMeal(false); toggleViewMeal(false);
+    };
 
     $('weekBtn').onclick = () => { toggleWeek(true); renderWeekList(); showDayDetail(state.dateKey); };
     $('weekClose').onclick = () => toggleWeek(false);
 
-    $('mealClose').onclick = () => { toggleMeal(false); };
-    $('btnCompressInfo').onclick = () => showToast('压缩策略：最长边≤1200px，质量动态下降，目标≈320KB', '🧠');
+    $('mealClose').onclick = () => { 
+      toggleMeal(false); 
+      setTimeout(() => clearMealDraft(), 300); // 延迟清理
+    };
+    $('viewMealClose').onclick = () => toggleViewMeal(false);
+    $('viewMealOkBtn').onclick = () => toggleViewMeal(false);
+
+    $('btnCompressInfo').onclick = () => showToast('策略：最长边≤1024px，压缩至 <200KB 以适配云端', '🧠');
 
     $('btnPickImg').onclick = () => $('mealImgInput').click();
     $('btnRemoveImg').onclick = () => {
@@ -1798,21 +1838,28 @@
     $('toggleMealMedia').onclick = toggleMealMedia;
     $('toggleMealMedia2').onclick = toggleMealMedia;
 
-    // 打卡按钮：开启功能 -> 弹窗；关闭功能 -> 直接打卡
+    // 打卡按钮：逻辑更新
     $('btnStartFast').onclick = async () => {
       ensureToday();
-      if (state.startTime) return;
+      if (state.startTime) {
+         showSingleMealDetail('start'); // 已打卡 -> 显示详情
+         return;
+      }
       if (prefs.mealMediaEnabled) openMealSheet('start');
       else await directCheckIn('start');
     };
     $('btnEndFast').onclick = async () => {
       ensureToday();
-      if (!state.startTime || state.endTime) return;
+      if (!state.startTime) return;
+      if (state.endTime) {
+         showSingleMealDetail('end'); // 已打卡 -> 显示详情
+         return;
+      }
       if (prefs.mealMediaEnabled) openMealSheet('end');
       else await directCheckIn('end');
     };
 
-    // 模式切换：第一餐后禁止改
+    // 模式切换
     $$('.tab').forEach(el => {
       el.onclick = async () => {
         ensureToday();
@@ -1918,6 +1965,10 @@
       currentUser = null;
       if (unsubDays) { unsubDays(); unsubDays = null; }
       dayMap = {};
+      // 彻底清理UI
+      state.updatedAt = 0; 
+      renderWeekList();
+      renderChart();
       renderUI();
       syncToggleUI();
     };
@@ -1941,7 +1992,6 @@
 
         subscribeDays(user.uid);
 
-        // 登录后：本地/云端冲突处理（按 updatedAt）
         try {
           const snap = await getDoc(dayDocRef(user.uid, state.dateKey));
           const remote = snap.exists() ? snap.data() : null;
