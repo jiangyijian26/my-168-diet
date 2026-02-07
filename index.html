@@ -6,7 +6,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="theme-color" content="#4F46E5" />
-  <meta name="description" content="16+8 间歇性断食助手 (Pro版)" />
+  <meta name="description" content="16+8 间歇性断食助手 (Pro版) - 云端同步（Base64 图片）" />
   <title>Fasting Pro Cloud</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -14,75 +14,69 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
   <style>
-    /* ==================== 1. 设计系统 (Design System) ==================== */
     :root {
-      /* 调色板 */
-      --primary: #6366f1; /* Indigo 500 */
+      --primary: #6366f1;
       --primary-dark: #4338ca;
       --primary-glow: rgba(99, 102, 241, 0.4);
-      
-      --success: #10b981; 
+
+      --success: #10b981;
       --success-glow: rgba(16, 185, 129, 0.3);
-      
+
       --danger: #ef4444;
-      
+      --warning: #f59e0b;
+
       --bg-body: #f8fafc;
       --bg-card: rgba(255, 255, 255, 0.75);
       --bg-glass-panel: rgba(255, 255, 255, 0.9);
-      
+
       --text-main: #0f172a;
       --text-sec: #64748b;
       --text-ter: #94a3b8;
-      
+
       --border: rgba(148, 163, 184, 0.2);
-      
-      /* 阴影与圆角 */
+
       --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
       --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
       --radius-xl: 28px;
       --radius-lg: 20px;
       --radius-md: 14px;
-      
+
       --font-main: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
       --ease-elastic: cubic-bezier(0.34, 1.56, 0.64, 1);
     }
 
-    /* 深色模式变量覆盖 */
     [data-theme="dark"] {
       --primary: #818cf8;
       --primary-dark: #6366f1;
       --primary-glow: rgba(129, 140, 248, 0.3);
-      
-      --bg-body: #0f172a; /* Slate 900 */
-      --bg-card: rgba(30, 41, 59, 0.7); /* Slate 800 */
+
+      --bg-body: #0f172a;
+      --bg-card: rgba(30, 41, 59, 0.7);
       --bg-glass-panel: rgba(15, 23, 42, 0.9);
-      
+
       --text-main: #f1f5f9;
       --text-sec: #94a3b8;
       --text-ter: #475569;
-      
+
       --border: rgba(255, 255, 255, 0.08);
       --shadow-lg: 0 20px 40px -10px rgba(0,0,0,0.6);
     }
 
-    /* 2. 全局重置 */
     * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; user-select: none; }
     html, body { height: 100%; overflow-x: hidden; }
-    
+
     body {
       margin: 0; padding: 0;
       font-family: var(--font-main);
       background: var(--bg-body);
       color: var(--text-main);
       transition: background 0.4s ease, color 0.4s ease;
-      /* 动态背景光晕 */
-      background-image: 
+      background-image:
         radial-gradient(circle at 0% 0%, rgba(99, 102, 241, 0.15), transparent 50%),
         radial-gradient(circle at 100% 100%, rgba(16, 185, 129, 0.1), transparent 50%);
       background-attachment: fixed;
     }
 
-    /* 布局容器 */
     .container {
       max-width: 460px; margin: 0 auto;
       padding: calc(16px + env(safe-area-inset-top)) 20px calc(40px + env(safe-area-inset-bottom));
@@ -90,9 +84,6 @@
       display: flex; flex-direction: column;
     }
 
-    /* 3. 组件样式 */
-    
-    /* 顶部导航 */
     .topbar {
       display: flex; justify-content: space-between; align-items: center;
       margin-bottom: 24px; padding-top: 10px;
@@ -100,10 +91,10 @@
     .brand h1 { margin: 0; font-size: 22px; font-weight: 800; letter-spacing: -0.5px; }
     .brand-badge {
       font-size: 11px; color: #fff; background: var(--primary);
-      padding: 3px 8px; border-radius: 100px; margin-left: 8px; 
+      padding: 3px 8px; border-radius: 100px; margin-left: 8px;
       vertical-align: middle; font-weight: 700; box-shadow: 0 2px 8px var(--primary-glow);
     }
-    
+
     .nav-actions { display: flex; gap: 12px; }
     .icon-btn {
       width: 44px; height: 44px; border-radius: 50%; border: 1px solid var(--border);
@@ -113,7 +104,6 @@
     }
     .icon-btn:active { transform: scale(0.9); }
 
-    /* 玻璃拟态卡片 */
     .card {
       background: var(--bg-card);
       backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
@@ -126,14 +116,13 @@
     }
     .card:hover { transform: translateY(-2px); box-shadow: var(--shadow-lg); }
 
-    /* 模式切换器 */
     .mode-tabs {
       display: flex; background: rgba(0,0,0,0.04);
       padding: 5px; border-radius: 18px; margin-bottom: 24px;
       position: relative; overflow: hidden;
     }
     [data-theme="dark"] .mode-tabs { background: rgba(255,255,255,0.08); }
-    
+
     .tab {
       flex: 1; text-align: center; padding: 12px 0; font-size: 13px; font-weight: 700;
       color: var(--text-sec); border-radius: 14px; cursor: pointer; z-index: 2;
@@ -144,128 +133,174 @@
       box-shadow: 0 4px 12px rgba(0,0,0,0.08);
     }
 
-    /* 仪表盘核心视觉 */
     .timer-section { position: relative; margin: 10px 0 30px; text-align: center; }
-    .timer-wrap { 
-      width: 260px; height: 260px; margin: 0 auto; position: relative; 
+    .timer-wrap {
+      width: 260px; height: 260px; margin: 0 auto; position: relative;
       filter: drop-shadow(0 10px 30px var(--primary-glow));
     }
     .timer-svg { transform: rotate(-90deg); width: 100%; height: 100%; overflow: visible; }
-    
-    /* 进度条定义 */
     .timer-track { fill: none; stroke: var(--border); stroke-width: 12; stroke-linecap: round; }
     .timer-progress {
       fill: none; stroke: url(#gradientMain); stroke-width: 12; stroke-linecap: round;
-      stroke-dasharray: 722; stroke-dashoffset: 722; /* 2 * PI * 115 */
+      stroke-dasharray: 722; stroke-dashoffset: 722;
       transition: stroke-dashoffset 1s linear;
     }
-    
-    /* 仪表盘内容 */
+
     .timer-content {
       position: absolute; inset: 0; display: flex; flex-direction: column;
       align-items: center; justify-content: center;
     }
-    .timer-val { 
-      font-size: 48px; font-weight: 800; font-variant-numeric: tabular-nums; 
-      letter-spacing: -2px; line-height: 1; margin-bottom: 4px;
+    .timer-val {
+      font-size: 44px; font-weight: 800; font-variant-numeric: tabular-nums;
+      letter-spacing: -2px; line-height: 1; margin-bottom: 6px;
       background: linear-gradient(135deg, var(--text-main), var(--text-sec));
       -webkit-background-clip: text; -webkit-text-fill-color: transparent;
     }
-    .timer-sub { font-size: 14px; font-weight: 600; color: var(--text-sec); margin-bottom: 12px; }
-    
+    .timer-sub { font-size: 14px; font-weight: 600; color: var(--text-sec); margin-bottom: 10px; }
+    .timer-hint {
+      font-size: 12px; color: var(--text-ter); font-weight: 600;
+      background: rgba(0,0,0,0.04);
+      padding: 8px 12px; border-radius: 999px;
+      display: inline-flex; gap: 8px; align-items: center;
+      border: 1px solid var(--border);
+    }
+    [data-theme="dark"] .timer-hint { background: rgba(255,255,255,0.06); }
+
     .status-badge {
       padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 700;
       display: inline-flex; align-items: center; gap: 6px;
       background: rgba(0,0,0,0.05); color: var(--text-sec);
       transition: 0.3s;
+      margin-bottom: 12px;
     }
     .status-badge.fasting { background: var(--success-glow); color: var(--success); }
     .status-badge.eating { background: var(--primary-glow); color: var(--primary); }
+    .status-badge.warn { background: rgba(245, 158, 11, 0.15); color: var(--warning); }
     .pulse-dot { width: 8px; height: 8px; border-radius: 50%; background: currentColor; animation: pulse 2s infinite; }
 
-    /* 操作网格 */
-    .meal-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px; }
+    .meal-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 18px; }
     .meal-card {
       background: var(--bg-card); border: 1px solid var(--border);
-      border-radius: var(--radius-lg); padding: 20px;
+      border-radius: var(--radius-lg); padding: 18px;
       display: flex; flex-direction: column; align-items: center; text-align: center;
       transition: 0.3s; cursor: pointer; position: relative;
+      min-height: 110px;
     }
     .meal-card.active { border-color: var(--primary); box-shadow: 0 0 0 2px var(--primary-glow); }
-    .meal-card.done { border-color: var(--success); opacity: 0.8; }
+    .meal-card.done { border-color: var(--success); opacity: 0.92; }
     .meal-card:active { transform: scale(0.96); }
 
     .meal-emoji { font-size: 32px; margin-bottom: 10px; transition: 0.3s var(--ease-elastic); }
     .meal-card:hover .meal-emoji { transform: scale(1.2) rotate(10deg); }
-    .meal-title { font-weight: 700; font-size: 15px; margin-bottom: 4px; }
-    .meal-time { font-size: 12px; color: var(--text-ter); font-weight: 500; }
+    .meal-title { font-weight: 700; font-size: 15px; margin-bottom: 4px; display:flex; align-items:center; gap:8px; justify-content:center; }
+    .meal-time { font-size: 12px; color: var(--text-ter); font-weight: 600; }
 
-    /* 数据行 */
-    .metrics-row { display: grid; grid-template-columns: 1.2fr 1fr; gap: 16px; margin-bottom: 24px; }
+    .mini-badge {
+      font-size: 10px; font-weight: 900;
+      padding: 4px 8px; border-radius: 999px;
+      background: rgba(0,0,0,0.05);
+      border: 1px solid var(--border);
+      color: var(--text-sec);
+    }
+    [data-theme="dark"] .mini-badge { background: rgba(255,255,255,0.06); }
+
+    .deadline-chip {
+      margin-top: 10px;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: rgba(0,0,0,0.04);
+      color: var(--text-sec);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      white-space: nowrap;
+    }
+    [data-theme="dark"] .deadline-chip { background: rgba(255,255,255,0.06); }
+    .deadline-chip.over { color: var(--danger); border-color: rgba(239,68,68,0.25); background: rgba(239,68,68,0.08); }
+    .deadline-chip.ok { color: var(--success); border-color: rgba(16,185,129,0.25); background: rgba(16,185,129,0.08); }
+
+    .metrics-row { display: grid; grid-template-columns: 1.2fr 1fr; gap: 16px; margin-bottom: 20px; }
     .mini-control {
       display: flex; justify-content: space-between; align-items: center;
       background: rgba(0,0,0,0.03); border-radius: 12px; padding: 6px; margin-top: 10px;
     }
+    [data-theme="dark"] .mini-control { background: rgba(255,255,255,0.06); }
+
     .circle-btn {
       width: 32px; height: 32px; border-radius: 10px; border: none;
       background: #fff; color: var(--text-main); font-weight: bold;
       box-shadow: 0 2px 4px rgba(0,0,0,0.05); cursor: pointer;
     }
-    [data-theme="dark"] .circle-btn { background: #334155; }
+    [data-theme="dark"] .circle-btn { background: #334155; color: var(--text-main); }
+
     .weight-inp {
-      width: 60px; background: transparent; border: none; text-align: center; 
+      width: 70px; background: transparent; border: none; text-align: center;
       font-weight: 800; font-size: 16px; color: var(--text-main);
     }
 
-    /* 统计周视图 (柱状图) */
     .stats-card { padding-bottom: 16px; }
-    .stats-header { display: flex; justify-content: space-around; margin-bottom: 20px; }
+    .stats-header { display: flex; justify-content: space-around; margin-bottom: 18px; }
     .stat-box { text-align: center; }
     .stat-num { font-size: 20px; font-weight: 800; display: block; }
-    .stat-lbl { font-size: 11px; color: var(--text-sec); text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600; margin-top: 4px; }
-    
-    .chart-container { 
-      display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; 
+    .stat-lbl { font-size: 11px; color: var(--text-sec); text-transform: uppercase; letter-spacing: 0.5px; font-weight: 700; margin-top: 4px; }
+
+    .chart-container {
+      display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px;
       height: 100px; align-items: end; padding: 0 10px;
     }
     .chart-bar-wrap { display: flex; flex-direction: column; align-items: center; gap: 8px; cursor: pointer; }
-    .chart-bar { 
-      width: 8px; border-radius: 10px; background: var(--border); 
+    .chart-bar {
+      width: 8px; border-radius: 10px; background: var(--border);
       transition: height 1s var(--ease-elastic), background 0.3s;
       min-height: 6px; position: relative;
     }
     .chart-bar.filled { background: var(--success); box-shadow: 0 0 10px var(--success-glow); }
     .chart-bar.current { background: var(--primary); }
-    .chart-day { font-size: 11px; color: var(--text-ter); font-weight: 600; }
+    .chart-day { font-size: 11px; color: var(--text-ter); font-weight: 700; }
 
-    /* 弹窗与表单 */
     .overlay {
       position: fixed; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px);
       z-index: 99; opacity: 0; pointer-events: none; transition: 0.4s;
     }
     .overlay.visible { opacity: 1; pointer-events: auto; }
-    
+
     .bottom-sheet {
       position: fixed; bottom: 0; left: 0; right: 0;
       background: var(--bg-glass-panel); backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px);
-      border-radius: 30px 30px 0 0; padding: 30px 24px calc(30px + env(safe-area-inset-bottom));
+      border-radius: 30px 30px 0 0; padding: 26px 20px calc(26px + env(safe-area-inset-bottom));
       z-index: 100; transform: translateY(110%); transition: 0.5s var(--ease-elastic);
       box-shadow: 0 -10px 40px rgba(0,0,0,0.2);
       max-width: 600px; margin: 0 auto;
+      max-height: min(82vh, 760px);
+      overflow: auto;
     }
     .bottom-sheet.visible { transform: translateY(0); }
-    
+
+    .sheet-head { display:flex; justify-content:space-between; align-items:center; gap: 12px; margin-bottom: 18px; }
+    .sheet-head h2 { margin:0; font-size: 20px; letter-spacing: -0.3px; }
+    .sheet-close {
+      background:none; border:none; font-size: 26px; color: var(--text-ter); cursor:pointer;
+      width: 40px; height: 40px; border-radius: 12px;
+      display: grid; place-items: center;
+    }
+    .sheet-close:active { transform: scale(0.96); }
+
     .input-box {
       width: 100%; padding: 16px; border-radius: 16px; border: 1px solid var(--border);
       background: rgba(0,0,0,0.03); font-size: 16px; color: var(--text-main);
-      margin-bottom: 16px; transition: 0.3s;
+      margin-bottom: 12px; transition: 0.3s;
     }
+    [data-theme="dark"] .input-box { background: rgba(255,255,255,0.06); }
     .input-box:focus { background: var(--bg-card); border-color: var(--primary); box-shadow: 0 0 0 4px var(--primary-glow); }
 
-    /* 通用按钮 */
+    textarea.input-box { resize:none; }
+
     .btn {
       width: 100%; padding: 16px; border: none; border-radius: 16px;
-      font-size: 16px; font-weight: 700; cursor: pointer;
+      font-size: 16px; font-weight: 800; cursor: pointer;
       display: flex; justify-content: center; align-items: center; gap: 8px;
       transition: 0.2s; position: relative;
     }
@@ -273,21 +308,20 @@
     .btn-primary { background: var(--primary); color: white; box-shadow: 0 8px 20px var(--primary-glow); }
     .btn-primary:hover { background: var(--primary-dark); }
     .btn-outline { background: transparent; border: 2px solid var(--border); color: var(--text-main); }
-    .btn-text { background: transparent; color: var(--text-sec); font-size: 14px; margin-top: 10px; }
+    .btn-text { background: transparent; color: var(--text-sec); font-size: 14px; margin-top: 10px; font-weight: 700; }
 
-    /* 提示 Toast */
     .toast {
-      position: fixed; top: calc(20px + env(safe-area-inset-top)); left: 50%; 
+      position: fixed; top: calc(20px + env(safe-area-inset-top)); left: 50%;
       transform: translateX(-50%) scale(0.9); opacity: 0; pointer-events: none;
       background: rgba(15, 23, 42, 0.9); color: white;
-      padding: 12px 24px; border-radius: 50px;
+      padding: 12px 18px; border-radius: 50px;
       box-shadow: 0 10px 30px rgba(0,0,0,0.2);
       display: flex; align-items: center; gap: 10px; z-index: 999;
-      transition: 0.4s var(--ease-elastic); font-weight: 600;
+      transition: 0.4s var(--ease-elastic); font-weight: 700;
+      max-width: calc(100vw - 24px);
     }
     .toast.visible { transform: translateX(-50%) scale(1); opacity: 1; }
 
-    /* 加载 Spinner */
     .spinner {
       width: 20px; height: 20px; border: 2px solid rgba(255,255,255,0.3);
       border-top-color: #fff; border-radius: 50%; animation: spin 0.8s linear infinite; display: none;
@@ -296,13 +330,151 @@
     .btn.loading span { display: none; }
     @keyframes spin { to { transform: rotate(360deg); } }
     @keyframes pulse { 0% { opacity: 1; transform: scale(1); } 50% { opacity: 0.6; transform: scale(1.2); } 100% { opacity: 1; transform: scale(1); } }
-    
-    /* 烟花 Canvas */
+
     #confetti { position: fixed; inset: 0; pointer-events: none; z-index: 200; }
+
+    /* 近一周列表 */
+    .week-list { display: flex; flex-direction: column; gap: 10px; margin-top: 8px; }
+    .week-item {
+      border: 1px solid var(--border);
+      background: var(--bg-card);
+      border-radius: 16px;
+      padding: 12px 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+    .week-item:active { transform: scale(0.98); }
+    .week-left { display: flex; flex-direction: column; gap: 4px; }
+    .week-date { font-weight: 800; font-size: 13px; }
+    .week-sub { font-size: 12px; color: var(--text-sec); font-weight: 700; }
+    .pill {
+      font-size: 11px;
+      font-weight: 800;
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      color: var(--text-sec);
+      background: rgba(0,0,0,0.03);
+      white-space: nowrap;
+    }
+    [data-theme="dark"] .pill { background: rgba(255,255,255,0.06); }
+    .pill.ok { color: var(--success); border-color: rgba(16,185,129,0.25); background: rgba(16,185,129,0.08); }
+    .pill.run { color: var(--primary); border-color: rgba(99,102,241,0.25); background: rgba(99,102,241,0.08); }
+    .pill.miss { color: var(--danger); border-color: rgba(239,68,68,0.25); background: rgba(239,68,68,0.08); }
+
+    .detail-box {
+      border: 1px solid var(--border);
+      background: rgba(0,0,0,0.02);
+      border-radius: 18px;
+      padding: 14px;
+      margin-top: 12px;
+    }
+    [data-theme="dark"] .detail-box { background: rgba(255,255,255,0.04); }
+    .detail-row { display:flex; justify-content: space-between; gap: 10px; padding: 8px 0; border-bottom: 1px dashed var(--border); font-weight: 700; }
+    .detail-row:last-child { border-bottom: none; }
+    .detail-k { color: var(--text-sec); font-size: 12px; }
+    .detail-v { color: var(--text-main); font-size: 12px; text-align: right; }
+
+    /* 上传/预览 */
+    .upload-card {
+      border: 1px solid var(--border);
+      background: rgba(0,0,0,0.02);
+      border-radius: 18px;
+      padding: 14px;
+      display:flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+    [data-theme="dark"] .upload-card { background: rgba(255,255,255,0.04); }
+    .upload-row { display:flex; justify-content: space-between; align-items:center; gap: 10px; }
+    .upload-h { font-weight: 900; font-size: 13px; }
+    .upload-sub { font-size: 11px; color: var(--text-ter); font-weight: 700; line-height: 1.35; }
+
+    .switch {
+      width: 50px; height: 30px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: rgba(0,0,0,0.06);
+      position: relative;
+      cursor: pointer;
+      flex: none;
+      transition: 0.25s;
+    }
+    [data-theme="dark"] .switch { background: rgba(255,255,255,0.08); }
+    .switch::after {
+      content:"";
+      width: 24px; height: 24px;
+      border-radius: 50%;
+      background: #fff;
+      position:absolute; top: 2.5px; left: 3px;
+      box-shadow: 0 6px 16px rgba(0,0,0,0.15);
+      transition: 0.25s var(--ease-elastic);
+    }
+    [data-theme="dark"] .switch::after { background: #e2e8f0; }
+    .switch.on {
+      background: rgba(99,102,241,0.25);
+      border-color: rgba(99,102,241,0.35);
+    }
+    .switch.on::after { left: 22px; background: var(--primary); }
+
+    .img-preview {
+      width: 100%;
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      overflow: hidden;
+      background: rgba(0,0,0,0.03);
+      display:none;
+    }
+    [data-theme="dark"] .img-preview { background: rgba(255,255,255,0.06); }
+    .img-preview img { width: 100%; height: auto; display:block; }
+
+    .two-col {
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    .small-btn {
+      padding: 12px;
+      border-radius: 14px;
+      font-weight: 900;
+      font-size: 14px;
+    }
+
+    .meal-media-grid {
+      display:grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+      margin-top: 10px;
+    }
+    .meal-media-box {
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      background: rgba(0,0,0,0.02);
+      padding: 12px;
+    }
+    [data-theme="dark"] .meal-media-box { background: rgba(255,255,255,0.04); }
+    .meal-media-head { display:flex; justify-content: space-between; align-items:center; gap: 10px; margin-bottom: 10px; }
+    .meal-media-head .t { font-weight: 900; font-size: 13px; }
+    .meal-media-head .s { font-size: 11px; color: var(--text-ter); font-weight: 800; }
+    .meal-media-img {
+      width: 100%;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      overflow:hidden;
+      margin-bottom: 10px;
+      display:none;
+    }
+    .meal-media-img img { width:100%; height:auto; display:block; }
+    .meal-media-note { font-size: 12px; color: var(--text-sec); font-weight: 700; line-height:1.5; white-space: pre-wrap; }
   </style>
 </head>
-<body>
 
+<body>
   <canvas id="confetti"></canvas>
 
   <div class="container">
@@ -311,16 +483,16 @@
         <h1>Fasting <span style="font-weight:300">Pro</span><span class="brand-badge">CLOUD</span></h1>
       </div>
       <div class="nav-actions">
-        <button class="icon-btn" id="themeBtn">🌓</button>
-        <button class="icon-btn" id="userBtn">👤</button>
+        <button class="icon-btn" id="themeBtn" title="主题">🌓</button>
+        <button class="icon-btn" id="userBtn" title="云同步">👤</button>
       </div>
     </div>
 
     <div class="mode-tabs">
-      <div class="tab" data-mode="12">12:12<br><span style="font-size:10px; font-weight:400; opacity:0.7">新手</span></div>
-      <div class="tab" data-mode="14">14:10<br><span style="font-size:10px; font-weight:400; opacity:0.7">日常</span></div>
-      <div class="tab active" data-mode="16">16:8<br><span style="font-size:10px; font-weight:400; opacity:0.7">燃脂</span></div>
-      <div class="tab" data-mode="18">18:6<br><span style="font-size:10px; font-weight:400; opacity:0.7">进阶</span></div>
+      <div class="tab" data-mode="12">12:12<br><span style="font-size:10px; font-weight:600; opacity:0.65">新手</span></div>
+      <div class="tab" data-mode="14">14:10<br><span style="font-size:10px; font-weight:600; opacity:0.65">日常</span></div>
+      <div class="tab active" data-mode="16">16:8<br><span style="font-size:10px; font-weight:600; opacity:0.65">燃脂</span></div>
+      <div class="tab" data-mode="18">18:6<br><span style="font-size:10px; font-weight:600; opacity:0.65">进阶</span></div>
     </div>
 
     <div class="card timer-section">
@@ -339,13 +511,15 @@
           <circle class="timer-track" cx="120" cy="120" r="115"></circle>
           <circle class="timer-progress" id="progressRing" cx="120" cy="120" r="115"></circle>
         </svg>
+
         <div class="timer-content">
           <div class="timer-val" id="timerDisplay">--:--</div>
           <div class="timer-sub" id="timerLabel">准备开始</div>
           <div class="status-badge" id="statusBadge">
             <div class="pulse-dot"></div>
-            <span id="statusText">禁食期</span>
+            <span id="statusText">空腹期</span>
           </div>
+          <div class="timer-hint" id="timerHint" style="display:none;">⏱️ <span id="timerHintText">—</span></div>
         </div>
       </div>
     </div>
@@ -353,29 +527,42 @@
     <div class="meal-grid">
       <div class="meal-card" id="btnStartFast">
         <div class="meal-emoji">🍳</div>
-        <div class="meal-title">第一餐</div>
+        <div class="meal-title">
+          第一餐 <span class="mini-badge" id="mediaBadgeStart" style="display:none;">📷</span>
+        </div>
         <div class="meal-time" id="startLabel">点击开始打卡</div>
       </div>
       <div class="meal-card" id="btnEndFast">
         <div class="meal-emoji">🌙</div>
-        <div class="meal-title">最后一餐</div>
+        <div class="meal-title">
+          最后一餐 <span class="mini-badge" id="mediaBadgeEnd" style="display:none;">📷</span>
+        </div>
         <div class="meal-time" id="endLabel">等待开始</div>
+        <div class="deadline-chip" id="deadlineChip" style="display:none;">⏳ 最晚可进食至：--:--</div>
       </div>
+    </div>
+
+    <div class="card" style="padding: 18px 18px; margin-top: -6px;">
+      <div style="font-size:12px; color:var(--text-sec); font-weight:800; margin-bottom:10px;">🗂️ 今日资料 / 备注（可同步）</div>
+      <textarea id="noteInput" class="input-box" rows="3" placeholder="例如：今天吃了什么、训练/作息、身体感受…（纯文本）"></textarea>
+      <button class="btn btn-outline" id="noteSaveBtn"><span>保存资料</span><div class="spinner"></div></button>
+      <div style="font-size:11px; color:var(--text-ter); margin-top:8px; font-weight:700;">提示：登录后会自动云端同步（跨设备实时一致）。</div>
     </div>
 
     <div class="metrics-row">
       <div class="card" style="margin:0; display:flex; flex-direction:column; justify-content:center;">
-        <div style="font-size:12px; color:var(--text-sec); font-weight:700; margin-bottom:8px;">💧 饮水 (杯)</div>
+        <div style="font-size:12px; color:var(--text-sec); font-weight:800; margin-bottom:8px;">💧 饮水 (杯)</div>
         <div class="mini-control">
           <button class="circle-btn" id="waterMinus">-</button>
-          <span style="font-weight:800; font-size:20px; color:var(--primary);" id="waterCount">0</span>
+          <span style="font-weight:900; font-size:20px; color:var(--primary);" id="waterCount">0</span>
           <button class="circle-btn" id="waterPlus" style="color:var(--primary);">+</button>
         </div>
       </div>
+
       <div class="card" style="margin:0; display:flex; flex-direction:column; justify-content:center;">
-        <div style="font-size:12px; color:var(--text-sec); font-weight:700; margin-bottom:8px;">⚖️ 体重 (kg)</div>
+        <div style="font-size:12px; color:var(--text-sec); font-weight:800; margin-bottom:8px;">⚖️ 体重 (kg)</div>
         <div class="mini-control">
-          <input type="number" class="weight-inp" id="weightInput" placeholder="0.0">
+          <input type="number" class="weight-inp" id="weightInput" placeholder="0.0" step="0.1">
           <button class="circle-btn" id="weightSaveBtn" style="width:auto; padding:0 12px; font-size:12px;">保存</button>
         </div>
       </div>
@@ -397,8 +584,17 @@
         </div>
       </div>
       <div style="height:1px; background:var(--border); margin-bottom:16px;"></div>
-      <div class="chart-container" id="weekChart">
+      <div class="chart-container" id="weekChart"></div>
+    </div>
+
+    <div class="card" style="padding: 18px 18px; margin-top: -6px;">
+      <div style="display:flex; justify-content:space-between; align-items:center; gap: 12px;">
+        <div>
+          <div style="font-size:12px; color:var(--text-sec); font-weight:900;">📚 近一周记录</div>
+          <div style="font-size:11px; color:var(--text-ter); font-weight:700; margin-top:4px;">含打卡、饮水、体重、资料备注、餐图与留言（登录后可跨设备实时同步）</div>
         </div>
+        <button class="icon-btn" id="weekBtn" title="查看近一周" style="width:46px; height:46px;">🗓️</button>
+      </div>
     </div>
 
     <div style="margin-top:auto; text-align:center;">
@@ -407,10 +603,12 @@
   </div>
 
   <div class="overlay" id="overlay"></div>
+
+  <!-- 云同步 -->
   <div class="bottom-sheet" id="authSheet">
-    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:24px;">
-      <h2 style="margin:0; font-size:24px;">☁️ 云端同步</h2>
-      <button id="authClose" style="background:none; border:none; font-size:24px; color:var(--text-ter); cursor:pointer;">&times;</button>
+    <div class="sheet-head">
+      <h2>☁️ 云端同步</h2>
+      <button class="sheet-close" id="authClose">&times;</button>
     </div>
 
     <div id="authForm">
@@ -421,13 +619,140 @@
       <div style="text-align:center;">
         <button class="btn-text" id="btnForgot">忘记密码?</button>
       </div>
+
+      <div class="upload-card" style="margin-top:14px;">
+        <div class="upload-row">
+          <div>
+            <div class="upload-h">📷 打卡时上传食物图片 & 留言</div>
+            <div class="upload-sub">可选功能。登录后开关与数据将保存到云端，跨设备一致。（本方案：图片以 Base64 存 Firestore）</div>
+          </div>
+          <div class="switch" id="toggleMealMedia"></div>
+        </div>
+        <div class="upload-sub" id="toggleHint">未登录：可切换但仅本机生效；登录后会写入云端设置。</div>
+      </div>
+
+      <div style="margin-top:10px; font-size:11px; color:var(--text-ter); font-weight:700; line-height: 1.4;">
+        同步策略：按天独立文档 + updatedAt 冲突决策 + 实时订阅，避免不同设备互相覆盖导致丢数据。<br>
+        图片策略：压缩后存 Firestore（单文档 1MB 限制，已做超限保护）。
+      </div>
     </div>
 
-    <div id="userPanel" style="display:none; text-align:center; padding:20px 0;">
-      <div style="font-size:56px; margin-bottom:16px; animation: pulse 3s infinite;">🎉</div>
-      <h3 id="userEmailDisplay" style="margin:0 0 8px;"></h3>
-      <p style="color:var(--text-sec); font-size:14px; margin-bottom:30px;">数据已安全备份至 Firebase 云端</p>
-      <button class="btn btn-outline" style="border-color:var(--danger); color:var(--danger);" id="btnLogout">退出登录</button>
+    <div id="userPanel" style="display:none; text-align:center; padding:10px 0 0;">
+      <div style="font-size:56px; margin-bottom:10px; animation: pulse 3s infinite;">🎉</div>
+      <h3 id="userEmailDisplay" style="margin:0 0 6px;"></h3>
+      <p style="color:var(--text-sec); font-size:14px; margin: 0 0 18px; font-weight:700;">数据已备份至 Firebase Firestore，并支持跨设备实时同步</p>
+
+      <div class="upload-card" style="text-align:left;">
+        <div class="upload-row">
+          <div>
+            <div class="upload-h">📷 打卡时上传食物图片 & 留言</div>
+            <div class="upload-sub">已登录：该设置会写入云端，所有设备一致。</div>
+          </div>
+          <div class="switch" id="toggleMealMedia2"></div>
+        </div>
+        <div class="upload-sub">提示：图片将以 Base64 存入 Firestore（适合每天少量图片）。</div>
+      </div>
+
+      <button class="btn btn-outline" style="border-color:var(--danger); color:var(--danger); margin-bottom: 10px;" id="btnLogout">退出登录</button>
+      <button class="btn btn-outline" id="btnForcePull">从云端强制拉取（慎用）</button>
+
+      <div style="margin-top:10px; font-size:11px; color:var(--text-ter); font-weight:700; line-height: 1.4;">
+        “强制拉取”会以云端最新为准覆盖本机今日数据，用于本机异常时修复。
+      </div>
+    </div>
+  </div>
+
+  <!-- 近一周 -->
+  <div class="bottom-sheet" id="weekSheet">
+    <div class="sheet-head">
+      <h2>🗓️ 近一周打卡</h2>
+      <button class="sheet-close" id="weekClose">&times;</button>
+    </div>
+    <div style="font-size:12px; color:var(--text-sec); font-weight:800; margin-bottom:10px;">
+      点击某一天查看详情（含餐图、留言与资料备注）
+    </div>
+    <div class="week-list" id="weekList"></div>
+
+    <div id="dayDetail" class="detail-box" style="display:none;">
+      <div style="font-weight:900; margin-bottom:8px; font-size:13px;" id="detailTitle">—</div>
+
+      <div class="detail-row"><div class="detail-k">模式</div><div class="detail-v" id="d_mode">—</div></div>
+      <div class="detail-row"><div class="detail-k">第一餐</div><div class="detail-v" id="d_start">—</div></div>
+      <div class="detail-row"><div class="detail-k">最后一餐</div><div class="detail-v" id="d_end">—</div></div>
+      <div class="detail-row"><div class="detail-k">进食窗口</div><div class="detail-v" id="d_eatwin">—</div></div>
+      <div class="detail-row"><div class="detail-k">饮水</div><div class="detail-v" id="d_water">—</div></div>
+      <div class="detail-row"><div class="detail-k">体重</div><div class="detail-v" id="d_weight">—</div></div>
+      <div class="detail-row"><div class="detail-k">资料备注</div><div class="detail-v" id="d_note">—</div></div>
+
+      <div class="meal-media-grid">
+        <div class="meal-media-box">
+          <div class="meal-media-head">
+            <div class="t">🍳 第一餐：图片/留言</div>
+            <div class="s" id="d_s_time">—</div>
+          </div>
+          <div class="meal-media-img" id="d_s_img"><img alt="第一餐图片"></div>
+          <div class="meal-media-note" id="d_s_note">—</div>
+        </div>
+
+        <div class="meal-media-box">
+          <div class="meal-media-head">
+            <div class="t">🌙 最后一餐：图片/留言</div>
+            <div class="s" id="d_e_time">—</div>
+          </div>
+          <div class="meal-media-img" id="d_e_img"><img alt="最后一餐图片"></div>
+          <div class="meal-media-note" id="d_e_note">—</div>
+        </div>
+      </div>
+
+      <div style="margin-top:10px; font-size:11px; color:var(--text-ter); font-weight:700;" id="d_sync">—</div>
+    </div>
+  </div>
+
+  <!-- 打卡：上传图片 & 留言 -->
+  <div class="bottom-sheet" id="mealSheet">
+    <div class="sheet-head">
+      <h2 id="mealSheetTitle">🍳 打卡</h2>
+      <button class="sheet-close" id="mealClose">&times;</button>
+    </div>
+
+    <div class="upload-card">
+      <div class="upload-h" id="mealSheetSub">—</div>
+      <div class="upload-sub" id="mealSheetHint">可选：添加食物图片与留言。登录后会同步到云端（Firestore）。</div>
+    </div>
+
+    <div class="upload-card" id="mealMediaArea">
+      <div class="upload-row">
+        <div>
+          <div class="upload-h">📷 食物图片（可选）</div>
+          <div class="upload-sub">会自动压缩并以 Base64 写入 Firestore（适合少量图片）。</div>
+        </div>
+        <button class="btn btn-outline small-btn" id="btnPickImg" style="width:auto;"><span>选择图片</span><div class="spinner"></div></button>
+      </div>
+
+      <input id="mealImgInput" type="file" accept="image/*" capture="environment" style="display:none;">
+      <div class="img-preview" id="mealImgPreview"><img alt="预览"></div>
+
+      <div class="two-col">
+        <button class="btn btn-outline small-btn" id="btnRemoveImg"><span>移除图片</span><div class="spinner"></div></button>
+        <button class="btn btn-outline small-btn" id="btnCompressInfo"><span>压缩说明</span><div class="spinner"></div></button>
+      </div>
+
+      <div class="upload-h">💬 留言（可选）</div>
+      <textarea id="mealMsgInput" class="input-box" rows="3" placeholder="例如：今天吃了鸡胸/沙拉、心情、训练强度…（纯文本）"></textarea>
+
+      <div class="upload-sub" id="mealCloudWarn" style="display:none;">
+        ⚠️ 未登录：图片/留言会先保存在本机；登录后才会同步到云端。
+      </div>
+      <div class="upload-sub" id="mealSizeWarn" style="display:none;">
+        ⚠️ 图片过大：已尽力压缩，仍可能因 Firestore 单文档上限导致无法保存图片。
+      </div>
+    </div>
+
+    <button class="btn btn-primary" id="mealConfirmBtn"><span>确认打卡</span><div class="spinner"></div></button>
+    <button class="btn btn-outline" id="mealSkipBtn" style="margin-top:10px;"><span>不添加图片/留言，直接打卡</span><div class="spinner"></div></button>
+
+    <div style="margin-top:10px; font-size:11px; color:var(--text-ter); font-weight:700; line-height:1.4;">
+      图片存储策略：压缩后 Base64 存 Firestore，适用于每天少量图片；若你未来要多图/原图，才需要 Storage（需绑卡）。
     </div>
   </div>
 
@@ -438,10 +763,28 @@
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-    import { getFirestore, doc, setDoc, getDoc, enableIndexedDbPersistence } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    import {
+      getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut,
+      onAuthStateChanged, sendPasswordResetEmail
+    } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+    import {
+      getFirestore, doc, setDoc, getDoc, enableIndexedDbPersistence,
+      collection, query, orderBy, limit, onSnapshot
+    } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-    /* ================= 配置区 ================= */
+    /*
+      ✅ 建议的 Firestore 规则（Firebase Console -> Firestore -> Rules）：
+      rules_version = '2';
+      service cloud.firestore {
+        match /databases/{database}/documents {
+          match /users/{userId}/{document=**} {
+            allow read, write: if request.auth != null && request.auth.uid == userId;
+          }
+        }
+      }
+    */
+
+    /* ================= 配置区（保留你的 Key，不改动） ================= */
     const firebaseConfig = {
       apiKey: "AIzaSyDxikMU7cksuU98yzunytYiLh1JwBWLs1E",
       authDomain: "app-b8dc2.firebaseapp.com",
@@ -463,53 +806,69 @@
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
     const db = getFirestore(app);
-    try { enableIndexedDbPersistence(db); } catch(e) { console.warn("Offline persistence disabled"); }
 
-    /* ================= 状态管理 ================= */
-    const STORAGE_KEY = 'fasting_pro_v2_state';
-    const HISTORY_KEY = 'fasting_pro_v2_history';
-
-    let state = {
-      date: new Date().toDateString(),
-      mode: 16,
-      startTime: null, // 进食开始时间戳
-      endTime: null,   // 进食结束时间戳 (计算得出)
-      meals: { start: null, end: null }, // 显示用的时间字符串
-      water: 0,
-      weight: null
-    };
-    
-    let history = []; 
-    let currentUser = null;
+    try { enableIndexedDbPersistence(db); } catch(e) { console.warn("Offline persistence disabled", e); }
 
     /* ================= 工具函数 ================= */
+    const STORAGE_KEY = 'fasting_pro_v5_state';
+    const PREF_KEY = 'fasting_pro_v5_prefs';
+
+    const TZ = Intl.DateTimeFormat().resolvedOptions().timeZone || 'local';
+
     const $ = id => document.getElementById(id);
     const $$ = sel => document.querySelectorAll(sel);
-    
-    // Toast 提示
+    const pad2 = n => String(n).padStart(2, '0');
+
+    const dateKeyLocal = (d = new Date()) => {
+      const y = d.getFullYear();
+      const m = pad2(d.getMonth() + 1);
+      const day = pad2(d.getDate());
+      return `${y}-${m}-${day}`;
+    };
+
+    const fmtTime = (ms) => {
+      if (!ms) return null;
+      const d = new Date(ms);
+      return d.toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit', hour12: false });
+    };
+
+    const fmtDateCN = (key) => {
+      const [y, m, d] = key.split('-');
+      return `${y}/${m}/${d}`;
+    };
+
+    const msToHMS = (ms) => {
+      const sign = ms < 0 ? '-' : '';
+      const x = Math.abs(ms);
+      const h = Math.floor(x / 3600000);
+      const m = Math.floor((x % 3600000) / 60000);
+      const s = Math.floor((x % 60000) / 1000);
+      return `${sign}${h}:${pad2(m)}:${pad2(s)}`;
+    };
+
     const showToast = (msg, icon = '✅', type = 'normal') => {
       const t = $('toast');
       $('toastMsg').innerText = msg;
       $('toastIcon').innerText = icon;
-      t.style.background = type === 'error' ? 'var(--danger)' : (document.documentElement.getAttribute('data-theme') === 'dark' ? 'rgba(255,255,255,0.9)' : 'rgba(15, 23, 42, 0.9)');
-      t.style.color = type === 'error' ? '#fff' : (document.documentElement.getAttribute('data-theme') === 'dark' ? '#000' : '#fff');
+      t.style.background = type === 'error'
+        ? 'var(--danger)'
+        : (document.documentElement.getAttribute('data-theme') === 'dark' ? 'rgba(255,255,255,0.92)' : 'rgba(15, 23, 42, 0.92)');
+      t.style.color = type === 'error'
+        ? '#fff'
+        : (document.documentElement.getAttribute('data-theme') === 'dark' ? '#000' : '#fff');
       t.classList.add('visible');
       setTimeout(() => t.classList.remove('visible'), 2500);
     };
 
-    // 格式化时间
-    const fmtTime = (d = new Date()) => d.toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit', hour12: false });
-    
-    // 简单的彩带特效
     const fireConfetti = () => {
       const canvas = $('confetti');
       const ctx = canvas.getContext('2d');
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
-      
+
       const particles = [];
       const colors = ['#6366f1', '#10b981', '#f59e0b', '#ef4444'];
-      
+
       for(let i=0; i<100; i++) {
         particles.push({
           x: canvas.width / 2, y: canvas.height / 2,
@@ -518,7 +877,7 @@
           life: 100
         });
       }
-      
+
       const animate = () => {
         ctx.clearRect(0,0,canvas.width,canvas.height);
         let active = false;
@@ -535,127 +894,433 @@
       animate();
     };
 
-    /* ================= 核心逻辑 ================= */
-
-    // 1. 数据持久化
-    const save = async () => {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-      localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
-      
-      if (currentUser) {
-        try {
-          await setDoc(doc(db, "users", currentUser.uid), {
-            state, history, lastSync: Date.now()
-          }, { merge: true });
-        } catch(e) { console.error("Cloud save failed", e); }
-      }
-      renderUI();
+    const btnLoading = (id, loading) => {
+      const btn = $(id);
+      if (!btn) return;
+      if(loading) { btn.classList.add('loading'); btn.disabled = true; }
+      else { btn.classList.remove('loading'); btn.disabled = false; }
     };
 
-    // 2. 数据加载与跨天处理
-    const loadData = async () => {
-      const s = localStorage.getItem(STORAGE_KEY);
-      const h = localStorage.getItem(HISTORY_KEY);
-      if (s) state = { ...state, ...JSON.parse(s) };
-      if (h) history = JSON.parse(h);
+    const toggleSheet = (id, show) => {
+      const s = $(id), o = $('overlay');
+      if (show) { s.classList.add('visible'); o.classList.add('visible'); }
+      else { s.classList.remove('visible'); o.classList.remove('visible'); }
+    };
+    const toggleAuth = (show) => toggleSheet('authSheet', show);
+    const toggleWeek = (show) => toggleSheet('weekSheet', show);
+    const toggleMeal = (show) => toggleSheet('mealSheet', show);
 
-      const today = new Date().toDateString();
-      // 如果日期变了，归档旧数据
-      if (state.date !== today) {
-        if (state.meals.start) {
-          // 防止重复推入
-          const exists = history.find(item => item.date === state.date);
-          if (!exists) {
-            history.unshift({
-              date: state.date,
-              mode: state.mode,
-              completed: !!(state.meals.start && state.meals.end),
-              weight: state.weight
-            });
-            if (history.length > 30) history.pop(); // 只存30天
+    /* ================= 本地偏好（功能开关） ================= */
+    let prefs = { mealMediaEnabled: false };
+
+    const loadPrefs = () => {
+      const raw = localStorage.getItem(PREF_KEY);
+      if (!raw) return;
+      try {
+        const parsed = JSON.parse(raw);
+        if (parsed && typeof parsed === 'object') prefs = { ...prefs, ...parsed };
+      } catch(e) {}
+    };
+    const savePrefs = () => {
+      localStorage.setItem(PREF_KEY, JSON.stringify(prefs));
+      syncToggleUI();
+    };
+
+    let currentUser = null;
+    const settingsRef = (uid) => doc(db, "users", uid, "settings", "main");
+
+    const pullCloudSettings = async () => {
+      if (!currentUser) return;
+      try {
+        const snap = await getDoc(settingsRef(currentUser.uid));
+        if (snap.exists()) {
+          const s = snap.data();
+          if (typeof s.mealMediaEnabled === 'boolean') {
+            prefs.mealMediaEnabled = s.mealMediaEnabled;
+            savePrefs();
           }
         }
-        // 重置今日
-        state = {
-          date: today,
-          mode: state.mode,
-          startTime: null, endTime: null,
-          meals: { start: null, end: null },
-          water: 0,
-          weight: state.weight // 继承体重
-        };
-        save();
-      }
-      renderUI();
+      } catch(e) { console.warn("pullCloudSettings failed", e); }
     };
 
-    // 3. UI 渲染引擎
-    const renderUI = () => {
-      // 模式高亮
-      $$('.tab').forEach(t => t.classList.toggle('active', +t.dataset.mode === state.mode));
-      
-      // 快捷数值
-      $('waterCount').innerText = state.water;
-      if (state.weight) $('weightInput').value = state.weight;
+    const pushCloudSettings = async () => {
+      if (!currentUser) return;
+      try {
+        await setDoc(settingsRef(currentUser.uid), {
+          mealMediaEnabled: !!prefs.mealMediaEnabled,
+          updatedAt: Date.now()
+        }, { merge: true });
+      } catch(e) {
+        console.warn("pushCloudSettings failed", e);
+        showToast('设置同步失败（离线将自动恢复）', '⚠️', 'error');
+      }
+    };
 
-      // 状态机判断
+    const syncToggleUI = () => {
+      const on = !!prefs.mealMediaEnabled;
+      const a = $('toggleMealMedia');
+      const b = $('toggleMealMedia2');
+      if (a) a.classList.toggle('on', on);
+      if (b) b.classList.toggle('on', on);
+
+      const hint = $('toggleHint');
+      if (hint) {
+        hint.innerText = currentUser
+          ? '已登录：开关状态会写入云端设置，所有设备一致。'
+          : '未登录：可切换但仅本机生效；登录后会写入云端设置。';
+      }
+    };
+
+    const toggleMealMedia = async () => {
+      prefs.mealMediaEnabled = !prefs.mealMediaEnabled;
+      savePrefs();
+      if (currentUser) await pushCloudSettings();
+      showToast(prefs.mealMediaEnabled ? '已开启：打卡图片/留言' : '已关闭：打卡图片/留言', prefs.mealMediaEnabled ? '📷' : '🧹');
+    };
+
+    /* ================= 本地 state（今日） ================= */
+    let state = {
+      dateKey: dateKeyLocal(),
+      mode: 16,
+      startTime: null,
+      endTime: null,
+      water: 0,
+      weight: null,
+      note: "",
+      // Base64 图片：只存 base64 裸串（不含 data:image... 前缀）
+      startMeal: { note: "", imageBase64: "" },
+      endMeal: { note: "", imageBase64: "" },
+      updatedAt: 0
+    };
+
+    let unsubDays = null;
+    let dayMap = {};
+
+    const dayDocRef = (uid, dateKey) => doc(db, "users", uid, "days", dateKey);
+    const dayCollectionRef = (uid) => collection(db, "users", uid, "days");
+
+    const localSave = () => localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    const localLoad = () => {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return;
+      try {
+        const parsed = JSON.parse(raw);
+        if (parsed && typeof parsed === 'object') state = { ...state, ...parsed };
+        if (!state.startMeal) state.startMeal = { note:"", imageBase64:"" };
+        if (!state.endMeal) state.endMeal = { note:"", imageBase64:"" };
+      } catch(e) {}
+    };
+
+    const ensureToday = () => {
+      const today = dateKeyLocal();
+      if (state.dateKey !== today) {
+        state = {
+          dateKey: today,
+          mode: state.mode,
+          startTime: null,
+          endTime: null,
+          water: 0,
+          weight: state.weight || null,
+          note: "",
+          startMeal: { note:"", imageBase64:"" },
+          endMeal: { note:"", imageBase64:"" },
+          updatedAt: Date.now()
+        };
+        localSave();
+      }
+    };
+
+    /* ================= 云同步（按天 + updatedAt） ================= */
+    const cloudUpsertToday = async () => {
+      if (!currentUser) return;
+      const uid = currentUser.uid;
+      const payload = {
+        dateKey: state.dateKey,
+        tz: TZ,
+        mode: state.mode,
+        startTime: state.startTime,
+        endTime: state.endTime,
+        water: state.water,
+        weight: state.weight,
+        note: state.note || "",
+        startMeal: state.startMeal || { note:"", imageBase64:"" },
+        endMeal: state.endMeal || { note:"", imageBase64:"" },
+        updatedAt: state.updatedAt
+      };
+      try {
+        await setDoc(dayDocRef(uid, state.dateKey), payload, { merge: true });
+      } catch(e) {
+        console.error("Cloud upsert failed", e);
+        showToast('云端保存失败（离线将自动恢复）', '⚠️', 'error');
+      }
+    };
+
+    const applyRemoteDayToLocalIfNewer = (remote) => {
+      if (!remote) return;
+      if (remote.dateKey !== state.dateKey) return;
+      const rU = Number(remote.updatedAt || 0);
+      const lU = Number(state.updatedAt || 0);
+      if (rU > lU) {
+        state = {
+          ...state,
+          mode: remote.mode ?? state.mode,
+          startTime: remote.startTime ?? null,
+          endTime: remote.endTime ?? null,
+          water: Number(remote.water ?? 0),
+          weight: remote.weight ?? null,
+          note: remote.note ?? "",
+          startMeal: remote.startMeal ?? { note:"", imageBase64:"" },
+          endMeal: remote.endMeal ?? { note:"", imageBase64:"" },
+          updatedAt: rU
+        };
+        if (!state.startMeal) state.startMeal = { note:"", imageBase64:"" };
+        if (!state.endMeal) state.endMeal = { note:"", imageBase64:"" };
+        localSave();
+        renderUI();
+        showToast('已从云端同步到最新', '☁️');
+      }
+    };
+
+    const subscribeDays = (uid) => {
+      if (unsubDays) unsubDays();
+      const q = query(dayCollectionRef(uid), orderBy("dateKey", "desc"), limit(30));
+      unsubDays = onSnapshot(q, (snap) => {
+        const nextMap = {};
+        snap.forEach(docu => nextMap[docu.id] = docu.data());
+        dayMap = nextMap;
+
+        const remoteToday = dayMap[dateKeyLocal()];
+        applyRemoteDayToLocalIfNewer(remoteToday);
+
+        renderWeekList();
+        calcStats();
+        renderChart();
+      }, (err) => console.error("onSnapshot error", err));
+    };
+
+    const forcePullToday = async () => {
+      if (!currentUser) return;
+      const uid = currentUser.uid;
+      try {
+        const snap = await getDoc(dayDocRef(uid, dateKeyLocal()));
+        if (snap.exists()) {
+          const remote = snap.data();
+          state = {
+            ...state,
+            dateKey: remote.dateKey || dateKeyLocal(),
+            mode: remote.mode ?? 16,
+            startTime: remote.startTime ?? null,
+            endTime: remote.endTime ?? null,
+            water: Number(remote.water ?? 0),
+            weight: remote.weight ?? null,
+            note: remote.note ?? "",
+            startMeal: remote.startMeal ?? { note:"", imageBase64:"" },
+            endMeal: remote.endMeal ?? { note:"", imageBase64:"" },
+            updatedAt: Number(remote.updatedAt || Date.now())
+          };
+          if (!state.startMeal) state.startMeal = { note:"", imageBase64:"" };
+          if (!state.endMeal) state.endMeal = { note:"", imageBase64:"" };
+          localSave();
+          renderUI();
+          showToast('已强制拉取云端', '⬇️');
+        } else {
+          showToast('云端今日暂无数据', 'ℹ️');
+        }
+      } catch(e) {
+        console.error(e);
+        showToast('强制拉取失败', '❌', 'error');
+      }
+    };
+
+    /* ================= 图片压缩与 Base64（核心替换点） ================= */
+    const fileToImage = async (file) => {
+      const url = URL.createObjectURL(file);
+      const img = new Image();
+      img.decoding = 'async';
+      img.src = url;
+      await new Promise((res, rej) => {
+        img.onload = () => res();
+        img.onerror = () => rej(new Error("image load failed"));
+      });
+      // 这里不 revoke，避免 iOS 提前释放导致空白；后续统一 revoke
+      return { img, url };
+    };
+
+    const canvasToBlob = (canvas, quality) =>
+      new Promise((res) => canvas.toBlob(res, 'image/jpeg', quality));
+
+    // 智能压缩：尺寸 + 质量双调节，尽量把 blob 控制在 targetBytes 以内
+    const compressImageSmart = async (file, opts = {}) => {
+      const maxSideStart = opts.maxSideStart ?? 1200;
+      const minSide = opts.minSide ?? 780;
+      const qStart = opts.qStart ?? 0.82;
+      const qMin = opts.qMin ?? 0.50;
+      const targetBytes = opts.targetBytes ?? (320 * 1024); // 320KB 目标，更稳
+
+      const { img, url } = await fileToImage(file);
+      try {
+        const w0 = img.naturalWidth || img.width;
+        const h0 = img.naturalHeight || img.height;
+
+        let maxSide = maxSideStart;
+        let quality = qStart;
+        let best = null;
+
+        for (let attempt = 0; attempt < 10; attempt++) {
+          // 1) 计算缩放
+          let nw = w0, nh = h0;
+          const scale = Math.min(1, maxSide / Math.max(w0, h0));
+          nw = Math.round(w0 * scale);
+          nh = Math.round(h0 * scale);
+
+          const canvas = document.createElement('canvas');
+          canvas.width = nw;
+          canvas.height = nh;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, nw, nh);
+
+          const blob = await canvasToBlob(canvas, quality);
+          if (!blob) throw new Error("toBlob failed");
+
+          // 记录一个“最好”的备选（哪怕没达标）
+          if (!best || blob.size < best.size) best = blob;
+
+          if (blob.size <= targetBytes) {
+            return { blob, ok: true, size: blob.size };
+          }
+
+          // 2) 不达标：优先降质量，再降尺寸
+          if (quality > qMin) {
+            quality = Math.max(qMin, quality - 0.08);
+          } else if (maxSide > minSide) {
+            maxSide = Math.max(minSide, Math.round(maxSide * 0.85));
+            quality = qStart; // 重新给一档质量
+          } else {
+            break;
+          }
+        }
+
+        // 实在达不到目标，返回最小的那个 blob（可能仍偏大）
+        return { blob: best, ok: false, size: best?.size ?? 0 };
+      } finally {
+        URL.revokeObjectURL(url);
+      }
+    };
+
+    const blobToBase64Raw = (blob) => {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          const s = String(reader.result || "");
+          const idx = s.indexOf(',');
+          resolve(idx >= 0 ? s.slice(idx + 1) : s);
+        };
+        reader.onerror = reject;
+        reader.readAsDataURL(blob);
+      });
+    };
+
+    const base64ToDataUrl = (b64) => b64 ? `data:image/jpeg;base64,${b64}` : "";
+
+    /* ================= UI 渲染 ================= */
+    const calcEatDeadline = () => {
+      if (!state.startTime) return null;
+      const eatMs = MODES[state.mode].eat * 3600000;
+      return state.startTime + eatMs;
+    };
+
+    const updateDeadlineChip = () => {
+      const chip = $('deadlineChip');
+      const deadline = calcEatDeadline();
+      if (!deadline) { chip.style.display = 'none'; return; }
+      const now = Date.now();
+      const endStr = fmtTime(deadline);
+      chip.style.display = 'inline-flex';
+      chip.innerText = `⏳ 最晚可进食至：${endStr}`;
+
+      const left = deadline - now;
+      chip.classList.remove('ok', 'over');
+      if (left >= 0) chip.classList.add('ok');
+      else chip.classList.add('over');
+    };
+
+    const renderMediaBadges = () => {
+      const s = $('mediaBadgeStart');
+      const e = $('mediaBadgeEnd');
+      const hasS = !!(state.startMeal?.imageBase64 || (state.startMeal?.note && state.startMeal.note.trim()));
+      const hasE = !!(state.endMeal?.imageBase64 || (state.endMeal?.note && state.endMeal.note.trim()));
+      s.style.display = hasS ? 'inline-block' : 'none';
+      e.style.display = hasE ? 'inline-block' : 'none';
+    };
+
+    const renderUI = () => {
+      ensureToday();
+
+      $$('.tab').forEach(t => t.classList.toggle('active', +t.dataset.mode === state.mode));
+
+      $('waterCount').innerText = state.water;
+      if (state.weight !== null && state.weight !== undefined && state.weight !== '') $('weightInput').value = state.weight;
+      $('noteInput').value = state.note || '';
+
       const bStart = $('btnStartFast');
       const bEnd = $('btnEndFast');
       const badge = $('statusBadge');
-      const progressRing = $('progressRing');
-      
-      // 复位样式
-      bStart.className = 'meal-card'; bEnd.className = 'meal-card';
-      progressRing.style.stroke = 'url(#gradientMain)';
+      const ring = $('progressRing');
 
-      if (!state.meals.start) {
-        // --- 阶段 0: 准备开始 ---
+      bStart.className = 'meal-card';
+      bEnd.className = 'meal-card';
+      ring.style.stroke = 'url(#gradientMain)';
+
+      updateDeadlineChip();
+      renderMediaBadges();
+
+      const startStr = fmtTime(state.startTime);
+      const endStr = fmtTime(state.endTime);
+
+      if (!state.startTime) {
         $('statusText').innerText = '空腹期';
         badge.className = 'status-badge fasting';
-        $('timerDisplay').style.background = ''; // reset text gradient
-        
+        $('timerHint').style.display = 'none';
+
         bStart.classList.add('active');
-        $('startLabel').innerText = '点击开始进食';
-        $('endLabel').innerText = '等待中';
-        
-      } else if (!state.meals.end) {
-        // --- 阶段 1: 进食窗口开启 ---
+        $('startLabel').innerText = '点击开始打卡';
+        $('endLabel').innerText = '等待开始';
+      } else if (!state.endTime) {
         $('statusText').innerText = '进食窗口';
         badge.className = 'status-badge eating';
-        progressRing.style.stroke = 'url(#gradientSuccess)';
-        
+        ring.style.stroke = 'url(#gradientSuccess)';
+
         bStart.classList.add('done');
-        $('startLabel').innerText = '开始于 ' + state.meals.start;
-        
+        $('startLabel').innerText = '开始于 ' + startStr;
+
         bEnd.classList.add('active');
-        $('endLabel').innerText = '点击结束窗口';
-        
+        $('endLabel').innerText = '点击最后一餐打卡';
       } else {
-        // --- 阶段 2: 今日已完成 ---
-        $('statusText').innerText = '进入燃脂';
+        $('statusText').innerText = '禁食期';
         badge.className = 'status-badge fasting';
-        
+
         bStart.classList.add('done');
-        $('startLabel').innerText = state.meals.start;
+        $('startLabel').innerText = startStr;
         bEnd.classList.add('done');
-        $('endLabel').innerText = state.meals.end;
+        $('endLabel').innerText = endStr;
       }
 
-      // 计算并更新图表
       calcStats();
       renderChart();
-      updateTimer(); // 立即刷新一次计时器
+      renderWeekList();
+      updateTimer();
     };
 
-    // 4. 计时器心跳
+    /* ================= 计时器 ================= */
     const updateTimer = () => {
       const ring = $('progressRing');
-      const circum = 722; // 2 * PI * 115
-      
+      const circum = 722;
+
       if (!state.startTime) {
         ring.style.strokeDashoffset = circum;
         $('timerDisplay').innerText = '--:--';
         $('timerLabel').innerText = '等待打卡';
+        $('timerHint').style.display = 'none';
         return;
       }
 
@@ -663,115 +1328,420 @@
       let percent = 0;
       let display = "";
       let label = "";
+      let hint = "";
 
-      if (!state.meals.end) {
-        // 进食倒计时
-        const targetEnd = state.startTime + (MODES[state.mode].eat * 3600000);
-        const left = targetEnd - now;
-        
+      if (!state.endTime) {
+        const eatDur = MODES[state.mode].eat * 3600000;
+        const end = state.startTime + eatDur;
+        const left = end - now;
+        const passed = now - state.startTime;
+
         if (left > 0) {
-          const totalDur = MODES[state.mode].eat * 3600000;
-          percent = 1 - (left / totalDur);
-          const h = Math.floor(left / 3600000);
-          const m = Math.floor((left % 3600000) / 60000);
-          const s = Math.floor((left % 60000) / 1000);
-          display = `${h}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
+          percent = Math.min(1, Math.max(0, passed / eatDur));
+          display = msToHMS(left);
           label = '距离窗口关闭';
+          hint = `最晚可进食至 ${fmtTime(end)}`;
+          $('timerHint').style.display = 'inline-flex';
+          $('statusBadge').classList.remove('warn');
         } else {
           percent = 1;
-          display = "00:00";
+          display = "00:00:00";
           label = "已超时";
+          hint = `已超过窗口关闭时间 ${fmtTime(end)}`;
+          $('timerHint').style.display = 'inline-flex';
+          $('statusBadge').classList.add('warn');
         }
       } else {
-        // 禁食计时 (从进食结束开始算)
-        // 计算已经禁食了多久
-        // 这里需要解析结束时间字符串回时间戳（简化处理，直接用当前时间减去大概）
-        // 更严谨的做法是在 state 里存 endTime stamp，这里为了简化逻辑直接展示当前时间
-        const d = new Date();
-        display = d.getHours().toString().padStart(2,'0') + ':' + d.getMinutes().toString().padStart(2,'0');
-        label = '当前时间';
-        percent = 1; // 满圈
+        const fastDur = MODES[state.mode].fast * 3600000;
+        const nextEat = state.endTime + fastDur;
+        const left = nextEat - now;
+        const passed = now - state.endTime;
+
+        percent = Math.min(1, Math.max(0, passed / fastDur));
+
+        if (left > 0) {
+          display = msToHMS(left);
+          label = '距离可进食';
+          hint = `预计可进食于 ${fmtTime(nextEat)}`;
+          $('timerHint').style.display = 'inline-flex';
+          $('statusBadge').classList.remove('warn');
+        } else {
+          display = msToHMS(-left);
+          label = '已达到禁食目标';
+          hint = `你已可进食（从 ${fmtTime(nextEat)} 起）`;
+          $('timerHint').style.display = 'inline-flex';
+          $('statusBadge').classList.remove('warn');
+        }
       }
 
-      // 动画与文字
       $('timerDisplay').innerText = display;
       $('timerLabel').innerText = label;
+      $('timerHintText').innerText = hint;
       ring.style.strokeDashoffset = circum - (percent * circum);
     };
 
-    // 5. 统计与图表
-    const calcStats = () => {
-      // 连续天数逻辑
-      let streak = 0;
-      const sortedHistory = [...history].sort((a,b) => new Date(b.date) - new Date(a.date));
-      // 检查昨天是否完成
-      const yesterday = new Date(); yesterday.setDate(yesterday.getDate() - 1);
-      const yesterdayStr = yesterday.toDateString();
-      
-      // 如果今天完成了，算1，然后往前推
-      if (state.meals.end) streak = 1;
-      // 否则如果昨天有记录，从昨天开始算
-      
-      let checkDate = state.meals.end ? yesterday : new Date();
-      
-      // 简易连胜算法
-      for (let i = 0; i < sortedHistory.length; i++) {
-        if (sortedHistory[i].completed) streak++;
-        else break; // 断了
+    /* ================= 统计 ================= */
+    const getDayRecord = (key) => {
+      if (key === state.dateKey) {
+        const remote = dayMap[key];
+        const rU = Number(remote?.updatedAt || 0);
+        const lU = Number(state.updatedAt || 0);
+        if (lU >= rU) {
+          return {
+            dateKey: state.dateKey,
+            mode: state.mode,
+            startTime: state.startTime,
+            endTime: state.endTime,
+            water: state.water,
+            weight: state.weight,
+            note: state.note || "",
+            startMeal: state.startMeal || { note:"", imageBase64:"" },
+            endMeal: state.endMeal || { note:"", imageBase64:"" },
+            updatedAt: state.updatedAt,
+            tz: TZ
+          };
+        }
       }
-      
-      const total = history.filter(h=>h.completed).length + (state.meals.end ? 1 : 0);
-      const rate = history.length > 0 ? Math.round((total / (history.length + (state.meals.end?1:0))) * 100) : 0;
+      return dayMap[key] || null;
+    };
+
+    const isCompleted = (rec) => !!(rec && rec.startTime && rec.endTime);
+
+    const calcStats = () => {
+      const keys = Object.keys(dayMap || {});
+      const todayKey = state.dateKey;
+      if (!keys.includes(todayKey)) keys.push(todayKey);
+
+      const recs = keys.map(k => getDayRecord(k)).filter(Boolean);
+
+      const totalCompleted = recs.filter(r => isCompleted(r)).length;
+
+      const daysWithAny = recs.filter(r => r && (r.startTime || r.endTime || (r.water>0) || r.weight || (r.note && r.note.trim()) ||
+        (r.startMeal?.note && r.startMeal.note.trim()) || (r.startMeal?.imageBase64) ||
+        (r.endMeal?.note && r.endMeal.note.trim()) || (r.endMeal?.imageBase64)
+      )).length;
+
+      const rate = daysWithAny > 0 ? Math.round((totalCompleted / daysWithAny) * 100) : 0;
+
+      let streak = 0;
+      for (let i = 0; i < 365; i++) {
+        const d = new Date();
+        d.setDate(d.getDate() - i);
+        const k = dateKeyLocal(d);
+        const r = getDayRecord(k);
+        if (isCompleted(r)) streak++;
+        else break;
+      }
 
       $('statStreak').innerText = streak;
-      $('statTotal').innerText = total;
-      $('statRate').innerText = (rate || 100) + '%';
+      $('statTotal').innerText = totalCompleted;
+      $('statRate').innerText = `${rate}%`;
     };
 
     const renderChart = () => {
       const container = $('weekChart');
       container.innerHTML = '';
-      
-      // 生成最近7天的数据（包括今天）
-      const days = ['日','一','二','三','四','五','六'];
+
+      const daysCN = ['日','一','二','三','四','五','六'];
       for (let i = 6; i >= 0; i--) {
         const d = new Date();
         d.setDate(d.getDate() - i);
-        const dStr = d.toDateString();
+        const key = dateKeyLocal(d);
         const isToday = i === 0;
-        
+
+        const rec = getDayRecord(key);
+
         let filled = false;
         let height = '6px';
-        
         if (isToday) {
-          if (state.meals.end) { filled = true; height = '80%'; }
-          else if (state.meals.start) { height = '40%'; } // 进行中
-        } else {
-          const rec = history.find(h => h.date === dStr);
-          if (rec && rec.completed) { filled = true; height = '60%'; } // 历史记录高度统一
+          if (state.endTime) { filled = true; height = '80%'; }
+          else if (state.startTime) { height = '40%'; }
+        } else if (rec) {
+          if (isCompleted(rec)) { filled = true; height = '60%'; }
+          else if (rec.startTime && !rec.endTime) { height = '30%'; }
         }
 
         const div = document.createElement('div');
         div.className = 'chart-bar-wrap';
         div.innerHTML = `
           <div class="chart-bar ${filled?'filled':''} ${isToday && !filled ? 'current':''}" style="height:${height}"></div>
-          <span class="chart-day" style="${isToday?'color:var(--primary)':''}">${days[d.getDay()]}</span>
+          <span class="chart-day" style="${isToday?'color:var(--primary)':''}">${daysCN[d.getDay()]}</span>
         `;
+        div.onclick = () => { toggleWeek(true); showDayDetail(key); };
         container.appendChild(div);
       }
     };
 
-    /* ================= 交互绑定 ================= */
-    
-    // 主题切换
+    /* ================= 近一周 ================= */
+    const renderWeekList = () => {
+      const list = $('weekList');
+      if (!list) return;
+      list.innerHTML = '';
+
+      const items = [];
+      for (let i = 0; i < 7; i++) {
+        const d = new Date();
+        d.setDate(d.getDate() - i);
+        const key = dateKeyLocal(d);
+        const rec = getDayRecord(key) || { dateKey: key };
+        items.push(rec);
+      }
+
+      items.forEach((rec) => {
+        const key = rec.dateKey;
+        const today = key === state.dateKey;
+        const ok = isCompleted(rec);
+        const running = !!(rec.startTime && !rec.endTime);
+
+        let pillCls = 'pill miss';
+        let pillText = '未完成';
+        if (ok) { pillCls = 'pill ok'; pillText = '已完成'; }
+        else if (running) { pillCls = 'pill run'; pillText = '进行中'; }
+
+        const media = (rec.startMeal?.imageBase64 || rec.endMeal?.imageBase64 || (rec.startMeal?.note && rec.startMeal.note.trim()) || (rec.endMeal?.note && rec.endMeal.note.trim()));
+        const mediaTag = media ? ' · 含餐图/留言' : '';
+
+        const sub = ok
+          ? `第一餐 ${fmtTime(rec.startTime)} · 最后一餐 ${fmtTime(rec.endTime)}${mediaTag}`
+          : running
+            ? `第一餐 ${fmtTime(rec.startTime)} · 等待最后一餐${mediaTag}`
+            : (rec.note && rec.note.trim() ? `有资料备注${mediaTag}` : (media ? `有餐图/留言` : `暂无记录`));
+
+        const el = document.createElement('div');
+        el.className = 'week-item';
+        el.innerHTML = `
+          <div class="week-left">
+            <div class="week-date">${today ? '今天' : fmtDateCN(key)}</div>
+            <div class="week-sub">${sub}</div>
+          </div>
+          <div class="${pillCls}">${pillText}</div>
+        `;
+        el.onclick = () => showDayDetail(key);
+        list.appendChild(el);
+      });
+    };
+
+    const showImgBox = (boxId, b64) => {
+      const box = $(boxId);
+      const img = box.querySelector('img');
+      if (b64) {
+        img.src = base64ToDataUrl(b64);
+        box.style.display = 'block';
+      } else {
+        img.src = '';
+        box.style.display = 'none';
+      }
+    };
+
+    const showDayDetail = (key) => {
+      const box = $('dayDetail');
+      box.style.display = 'block';
+
+      const rec = getDayRecord(key);
+      $('detailTitle').innerText = (key === state.dateKey ? '今天' : fmtDateCN(key)) + ' · 详情';
+
+      if (!rec) {
+        $('d_mode').innerText = '—';
+        $('d_start').innerText = '—';
+        $('d_end').innerText = '—';
+        $('d_eatwin').innerText = '—';
+        $('d_water').innerText = '—';
+        $('d_weight').innerText = '—';
+        $('d_note').innerText = '—';
+        $('d_s_time').innerText = '—';
+        $('d_e_time').innerText = '—';
+        showImgBox('d_s_img', '');
+        showImgBox('d_e_img', '');
+        $('d_s_note').innerText = '—';
+        $('d_e_note').innerText = '—';
+        $('d_sync').innerText = '无记录';
+        return;
+      }
+
+      const mode = rec.mode ?? 16;
+      const eatH = MODES[mode]?.eat ?? 8;
+      const fastH = MODES[mode]?.fast ?? 16;
+
+      const start = rec.startTime ? fmtTime(rec.startTime) : '—';
+      const end = rec.endTime ? fmtTime(rec.endTime) : '—';
+
+      let eatwin = `进食 ${eatH}h · 禁食 ${fastH}h`;
+      if (rec.startTime) {
+        const deadline = rec.startTime + eatH * 3600000;
+        eatwin += ` · 最晚可进食 ${fmtTime(deadline)}`;
+      }
+
+      $('d_mode').innerText = `${mode}:${24-mode}`;
+      $('d_start').innerText = start;
+      $('d_end').innerText = end;
+      $('d_eatwin').innerText = eatwin;
+      $('d_water').innerText = (rec.water ?? 0) + ' 杯';
+      $('d_weight').innerText = (rec.weight ?? '—');
+      $('d_note').innerText = (rec.note && String(rec.note).trim()) ? String(rec.note).trim().slice(0, 200) : '—';
+
+      const sMeal = rec.startMeal || { note:"", imageBase64:"" };
+      const eMeal = rec.endMeal || { note:"", imageBase64:"" };
+
+      $('d_s_time').innerText = rec.startTime ? `打卡 ${fmtTime(rec.startTime)}` : '—';
+      $('d_e_time').innerText = rec.endTime ? `打卡 ${fmtTime(rec.endTime)}` : '—';
+
+      showImgBox('d_s_img', sMeal.imageBase64 || '');
+      showImgBox('d_e_img', eMeal.imageBase64 || '');
+
+      $('d_s_note').innerText = (sMeal.note && sMeal.note.trim()) ? sMeal.note.trim() : '—';
+      $('d_e_note').innerText = (eMeal.note && eMeal.note.trim()) ? eMeal.note.trim() : '—';
+
+      const ua = rec.updatedAt ? new Date(rec.updatedAt).toLocaleString('zh-CN', { hour12:false }) : '—';
+      $('d_sync').innerText = `最后更新：${ua}（${rec.tz || TZ}）`;
+    };
+
+    /* ================= 打卡弹窗逻辑 ================= */
+    let pendingMealWhich = null; // "start" | "end"
+    let pendingFile = null;      // File
+    let pendingPreviewURL = null;
+
+    const clearMealDraft = () => {
+      pendingMealWhich = null;
+      pendingFile = null;
+      if (pendingPreviewURL) {
+        URL.revokeObjectURL(pendingPreviewURL);
+        pendingPreviewURL = null;
+      }
+      $('mealMsgInput').value = '';
+      $('mealSizeWarn').style.display = 'none';
+      const box = $('mealImgPreview');
+      box.style.display = 'none';
+      box.querySelector('img').src = '';
+      $('mealCloudWarn').style.display = currentUser ? 'none' : 'block';
+    };
+
+    const openMealSheet = (which) => {
+      clearMealDraft();
+      pendingMealWhich = which;
+      const isStart = which === 'start';
+      $('mealSheetTitle').innerText = isStart ? '🍳 第一餐打卡' : '🌙 最后一餐打卡';
+      $('mealSheetSub').innerText = isStart ? '可选添加：第一餐食物图片与留言' : '可选添加：最后一餐食物图片与留言';
+      $('mealSheetHint').innerText = prefs.mealMediaEnabled
+        ? '你已开启该功能。确认后将把图片/留言与打卡一起保存到云端（Firestore，需满足文档大小限制）。'
+        : '你已关闭该功能。此弹窗不会出现（如需使用可在“云同步”面板开启）。';
+
+      $('mealCloudWarn').style.display = currentUser ? 'none' : 'block';
+      toggleMeal(true);
+    };
+
+    const persist = async () => {
+      state.updatedAt = Date.now();
+      localSave();
+      renderUI();
+      await cloudUpsertToday();
+    };
+
+    const directCheckIn = async (which) => {
+      ensureToday();
+      if (which === 'start') {
+        if (state.startTime) return;
+        state.startTime = Date.now();
+        state.endTime = null;
+      } else {
+        if (!state.startTime || state.endTime) return;
+        state.endTime = Date.now();
+      }
+      await persist();
+      showToast(which === 'start' ? '第一餐已打卡' : '最后一餐已打卡', which === 'start' ? '🍳' : '🌙');
+      if (which === 'end') { fireConfetti(); }
+    };
+
+    const confirmMealWithMedia = async () => {
+      const which = pendingMealWhich;
+      if (!which) return;
+
+      btnLoading('mealConfirmBtn', true);
+      btnLoading('mealSkipBtn', true);
+      btnLoading('btnPickImg', true);
+      btnLoading('btnRemoveImg', true);
+
+      try {
+        ensureToday();
+
+        // 先写打卡时间（保证时序一致）
+        if (which === 'start') {
+          if (state.startTime) return showToast('第一餐已打卡，无需重复', 'ℹ️');
+          state.startTime = Date.now();
+          state.endTime = null;
+        } else {
+          if (!state.startTime) return showToast('请先完成第一餐打卡', '⚠️', 'error');
+          if (state.endTime) return showToast('最后一餐已打卡，无需重复', 'ℹ️');
+          state.endTime = Date.now();
+        }
+
+        const msg = ($('mealMsgInput').value || '').trim();
+        if (which === 'start') state.startMeal = { ...(state.startMeal||{}), note: msg };
+        else state.endMeal = { ...(state.endMeal||{}), note: msg };
+
+        // 图片：压缩 -> Base64 -> 写入 state；登录后再由 cloudUpsert 同步
+        if (pendingFile) {
+          const res = await compressImageSmart(pendingFile, {
+            maxSideStart: 1200,
+            minSide: 780,
+            qStart: 0.82,
+            qMin: 0.50,
+            targetBytes: 320 * 1024
+          });
+
+          if (!res.blob) {
+            showToast('图片处理失败，请重试', '❌', 'error');
+          } else {
+            const b64 = await blobToBase64Raw(res.blob);
+
+            // 超限保护：粗略估算 base64 大小（base64 比原始约大 33%）
+            // Firestore 单文档 1MB，上层还有其他字段；这里保守控制在 ~650KB base64 字符以内
+            const tooLarge = (b64.length > 650 * 1024);
+            if (tooLarge) {
+              $('mealSizeWarn').style.display = 'block';
+              showToast('图片仍偏大，已放弃保存图片（可换更小图片）', '⚠️', 'error');
+            } else {
+              if (which === 'start') state.startMeal = { ...(state.startMeal||{}), imageBase64: b64 };
+              else state.endMeal = { ...(state.endMeal||{}), imageBase64: b64 };
+
+              if (!res.ok) {
+                $('mealSizeWarn').style.display = 'block';
+                showToast('图片已强压缩以适配云同步', '🗜️');
+              }
+            }
+          }
+
+          if (!currentUser) {
+            showToast('未登录：已先保存在本机，登录后才会同步', 'ℹ️');
+          }
+        }
+
+        await persist();
+
+        toggleMeal(false);
+        showToast(which === 'start' ? '第一餐打卡完成' : '最后一餐打卡完成', '✅');
+        if (which === 'end') fireConfetti();
+      } catch(e) {
+        console.error(e);
+        showToast('打卡失败，请重试', '❌', 'error');
+      } finally {
+        btnLoading('mealConfirmBtn', false);
+        btnLoading('mealSkipBtn', false);
+        btnLoading('btnPickImg', false);
+        btnLoading('btnRemoveImg', false);
+      }
+    };
+
+    /* ================= 主题 ================= */
     const initTheme = () => {
       const saved = localStorage.getItem('theme');
       const sysDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
       if (saved) document.documentElement.setAttribute('data-theme', saved);
       else if (sysDark) document.documentElement.setAttribute('data-theme', 'dark');
+      else document.documentElement.setAttribute('data-theme', 'light');
     };
     initTheme();
-    
+
+    /* ================= 绑定事件 ================= */
     $('themeBtn').onclick = () => {
       const curr = document.documentElement.getAttribute('data-theme');
       const next = curr === 'dark' ? 'light' : 'dark';
@@ -779,97 +1749,185 @@
       localStorage.setItem('theme', next);
     };
 
-    // 打卡逻辑
-    $('btnStartFast').onclick = () => {
-      if (state.meals.start) return; // 已打卡
-      state.startTime = Date.now();
-      state.meals.start = fmtTime(new Date());
-      save(); renderUI();
-      showToast('进食窗口已开启');
+    $('userBtn').onclick = () => toggleAuth(true);
+    $('authClose').onclick = () => toggleAuth(false);
+    $('overlay').onclick = () => { toggleAuth(false); toggleWeek(false); toggleMeal(false); };
+
+    $('weekBtn').onclick = () => { toggleWeek(true); renderWeekList(); showDayDetail(state.dateKey); };
+    $('weekClose').onclick = () => toggleWeek(false);
+
+    $('mealClose').onclick = () => { toggleMeal(false); };
+    $('btnCompressInfo').onclick = () => showToast('压缩策略：最长边≤1200px，质量动态下降，目标≈320KB', '🧠');
+
+    $('btnPickImg').onclick = () => $('mealImgInput').click();
+    $('btnRemoveImg').onclick = () => {
+      pendingFile = null;
+      if (pendingPreviewURL) {
+        URL.revokeObjectURL(pendingPreviewURL);
+        pendingPreviewURL = null;
+      }
+      const box = $('mealImgPreview');
+      box.style.display = 'none';
+      box.querySelector('img').src = '';
+      showToast('已移除图片', '🧹');
     };
 
-    $('btnEndFast').onclick = () => {
-      if (!state.meals.start || state.meals.end) return;
-      state.endTime = Date.now(); // 实际结束时间
-      state.meals.end = fmtTime(new Date());
-      save(); renderUI();
-      showToast('今日目标达成！', '🎉');
-      fireConfetti();
+    $('mealImgInput').addEventListener('change', (e) => {
+      const f = e.target.files && e.target.files[0];
+      if (!f) return;
+      if (!f.type.startsWith('image/')) return showToast('请选择图片文件', '⚠️', 'error');
+      pendingFile = f;
+
+      if (pendingPreviewURL) URL.revokeObjectURL(pendingPreviewURL);
+      pendingPreviewURL = URL.createObjectURL(f);
+      const box = $('mealImgPreview');
+      box.querySelector('img').src = pendingPreviewURL;
+      box.style.display = 'block';
+      showToast('已选择图片', '📷');
+
+      $('mealImgInput').value = '';
+    });
+
+    $('mealConfirmBtn').onclick = confirmMealWithMedia;
+    $('mealSkipBtn').onclick = async () => {
+      const which = pendingMealWhich;
+      toggleMeal(false);
+      await directCheckIn(which);
     };
 
-    // 模式切换
+    $('toggleMealMedia').onclick = toggleMealMedia;
+    $('toggleMealMedia2').onclick = toggleMealMedia;
+
+    // 打卡按钮：开启功能 -> 弹窗；关闭功能 -> 直接打卡
+    $('btnStartFast').onclick = async () => {
+      ensureToday();
+      if (state.startTime) return;
+      if (prefs.mealMediaEnabled) openMealSheet('start');
+      else await directCheckIn('start');
+    };
+    $('btnEndFast').onclick = async () => {
+      ensureToday();
+      if (!state.startTime || state.endTime) return;
+      if (prefs.mealMediaEnabled) openMealSheet('end');
+      else await directCheckIn('end');
+    };
+
+    // 模式切换：第一餐后禁止改
     $$('.tab').forEach(el => {
-      el.onclick = () => {
-        if (state.meals.start) return showToast('打卡后不可更改模式', '🚫', 'error');
+      el.onclick = async () => {
+        ensureToday();
+        if (state.startTime) return showToast('第一餐后不可更改模式', '🚫', 'error');
         state.mode = +el.dataset.mode;
-        save();
+        await persist();
       };
     });
 
-    // 饮水 & 体重
-    $('waterPlus').onclick = () => { state.water++; save(); };
-    $('waterMinus').onclick = () => { if(state.water>0) state.water--; save(); };
-    $('weightSaveBtn').onclick = () => {
-      if ($('weightInput').value) {
-        state.weight = $('weightInput').value;
-        save(); showToast('体重已记录');
+    // 饮水
+    $('waterPlus').onclick = async () => { ensureToday(); state.water++; await persist(); };
+    $('waterMinus').onclick = async () => { ensureToday(); if(state.water>0) state.water--; await persist(); };
+
+    // 体重
+    $('weightSaveBtn').onclick = async () => {
+      ensureToday();
+      const v = $('weightInput').value;
+      if (v === '' || v === null || v === undefined) return;
+      state.weight = v;
+      await persist();
+      showToast('体重已记录', '⚖️');
+    };
+
+    // 今日资料
+    $('noteSaveBtn').onclick = async () => {
+      ensureToday();
+      btnLoading('noteSaveBtn', true);
+      try {
+        state.note = ($('noteInput').value || '').trim();
+        await persist();
+        showToast('资料已保存', '📌');
+      } finally {
+        btnLoading('noteSaveBtn', false);
       }
     };
-    $('resetBtn').onclick = () => {
-      if(confirm('重置将清除今日所有打卡数据，确定吗？')) {
-        state.startTime = null; state.endTime = null;
-        state.meals = {start:null, end:null};
-        save(); showToast('已重置');
+
+    // 重置今日
+    $('resetBtn').onclick = async () => {
+      ensureToday();
+      if(confirm('重置将清除今日打卡/饮水/资料/餐图留言，确定吗？')) {
+        state.startTime = null;
+        state.endTime = null;
+        state.water = 0;
+        state.note = "";
+        state.startMeal = { note:"", imageBase64:"" };
+        state.endMeal = { note:"", imageBase64:"" };
+        state.updatedAt = Date.now();
+        localSave();
+        renderUI();
+        await cloudUpsertToday();
+        showToast('已重置', '🧼');
       }
     };
 
-    /* ================= 用户系统 (Firebase Auth) ================= */
-    const toggleSheet = show => {
-      const s = $('authSheet'), o = $('overlay');
-      if (show) { s.classList.add('visible'); o.classList.add('visible'); }
-      else { s.classList.remove('visible'); o.classList.remove('visible'); }
-    };
-    
-    $('userBtn').onclick = () => toggleSheet(true);
-    $('authClose').onclick = () => toggleSheet(false);
-    $('overlay').onclick = () => toggleSheet(false);
-
-    const btnLoading = (id, loading) => {
-      const btn = $(id);
-      if(loading) { btn.classList.add('loading'); btn.disabled = true; }
-      else { btn.classList.remove('loading'); btn.disabled = false; }
-    };
-
+    /* ================= Auth ================= */
     $('btnLogin').onclick = async () => {
       const email = $('authEmail').value, pwd = $('authPwd').value;
       if(!email || !pwd) return showToast('请填写完整', '⚠️', 'error');
       btnLoading('btnLogin', true);
       try {
         await signInWithEmailAndPassword(auth, email, pwd);
-        toggleSheet(false); showToast('登录成功');
-      } catch(e) { showToast('登录失败，请检查密码', '❌', 'error'); }
+        toggleAuth(false);
+        showToast('登录成功', '✅');
+      } catch(e) {
+        console.error(e);
+        showToast('登录失败，请检查邮箱或密码', '❌', 'error');
+      }
       btnLoading('btnLogin', false);
     };
 
     $('btnRegister').onclick = async () => {
       const email = $('authEmail').value, pwd = $('authPwd').value;
-      if(pwd.length < 6) return showToast('密码太短', '⚠️', 'error');
+      if(!email || !pwd) return showToast('请填写完整', '⚠️', 'error');
+      if(pwd.length < 6) return showToast('密码至少6位', '⚠️', 'error');
       btnLoading('btnRegister', true);
       try {
         await createUserWithEmailAndPassword(auth, email, pwd);
-        toggleSheet(false); showToast('注册成功');
-      } catch(e) { showToast('注册失败: ' + e.message, '❌', 'error'); }
+        toggleAuth(false);
+        showToast('注册成功', '🎉');
+      } catch(e) {
+        console.error(e);
+        showToast('注册失败：' + (e?.message || '未知错误'), '❌', 'error');
+      }
       btnLoading('btnRegister', false);
+    };
+
+    $('btnForgot').onclick = async () => {
+      const email = $('authEmail').value;
+      if(!email) return showToast('请先填写邮箱', '⚠️', 'error');
+      try {
+        await sendPasswordResetEmail(auth, email);
+        showToast('已发送重置邮件', '📧');
+      } catch(e) {
+        console.error(e);
+        showToast('发送失败，请检查邮箱', '❌', 'error');
+      }
     };
 
     $('btnLogout').onclick = async () => {
       await signOut(auth);
-      toggleSheet(false); showToast('已退出');
-      history = []; // 清空历史以防隐私泄露
-      save(); // 重新加载本地
+      toggleAuth(false);
+      showToast('已退出', '👋');
+      currentUser = null;
+      if (unsubDays) { unsubDays(); unsubDays = null; }
+      dayMap = {};
+      renderUI();
+      syncToggleUI();
     };
 
-    // Auth 监听与云同步
+    $('btnForcePull').onclick = async () => {
+      if (!currentUser) return;
+      if (!confirm('确定强制从云端覆盖本机今日数据？')) return;
+      await forcePullToday();
+    };
+
     onAuthStateChanged(auth, async (user) => {
       currentUser = user;
       if (user) {
@@ -877,30 +1935,43 @@
         $('userPanel').style.display = 'block';
         $('userEmailDisplay').innerText = user.email;
         $('userBtn').innerHTML = '<span style="color:var(--success)">●</span>';
-        
-        // 拉取云端数据
+
+        await pullCloudSettings();
+        syncToggleUI();
+
+        subscribeDays(user.uid);
+
+        // 登录后：本地/云端冲突处理（按 updatedAt）
         try {
-          const snap = await getDoc(doc(db, "users", user.uid));
-          if (snap.exists()) {
-            const data = snap.data();
-            // 简单策略：云端有数据则覆盖，或者保留本地较新的
-            if (data.state) state = { ...state, ...data.state };
-            if (data.history) history = data.history;
-            save(); // 保存到本地并刷新UI
-            showToast('数据已同步', '☁️');
-          }
+          const snap = await getDoc(dayDocRef(user.uid, state.dateKey));
+          const remote = snap.exists() ? snap.data() : null;
+          const rU = Number(remote?.updatedAt || 0);
+          const lU = Number(state.updatedAt || 0);
+          if (!remote || lU >= rU) await cloudUpsertToday();
+          else applyRemoteDayToLocalIfNewer(remote);
+
+          showToast('云端同步已开启', '☁️');
         } catch(e) { console.error(e); }
       } else {
         $('authForm').style.display = 'block';
         $('userPanel').style.display = 'none';
         $('userBtn').innerText = '👤';
+        syncToggleUI();
       }
     });
 
     /* ================= 启动 ================= */
-    loadData();
-    setInterval(updateTimer, 1000);
+    loadPrefs();
+    localLoad();
+    ensureToday();
+    syncToggleUI();
+    renderUI();
 
+    setInterval(() => {
+      ensureToday();
+      updateDeadlineChip();
+      updateTimer();
+    }, 1000);
   </script>
 </body>
 </html>
