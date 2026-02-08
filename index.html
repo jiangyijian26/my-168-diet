@@ -1,431 +1,1516 @@
 <!DOCTYPE html>
-<html lang="zh-CN" data-theme="light">
+<html lang="zh-CN" data-theme="auto">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>16+8 轻断食助手</title>
-    <style>
-        :root {
-            --bg-color: #f5f5f7;
-            --card-bg: #ffffff;
-            --text-color: #1d1d1f;
-            --primary-color: #007aff;
-            --danger-color: #ff3b30;
-            --success-color: #34c759;
-            --secondary-bg: #e5e5ea;
-        }
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#4F46E5" />
+<meta name="description" content="健康饮食 Pro 1.0 - 科学饮食与间歇性断食助手" />
+<title>健康饮食 Pro</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+    --primary: #6366f1;
+    --primary-dark: #4338ca;
+    --primary-glow: rgba(99, 102, 241, 0.4);
+    --success: #10b981;
+    --success-glow: rgba(16, 185, 129, 0.3);
+    --danger: #ef4444;
+    --warning: #f59e0b;
+    --bg-body: #f8fafc;
+    --bg-card: rgba(255, 255, 255, 0.75);
+    --bg-glass-panel: rgba(255, 255, 255, 0.9);
+    --text-main: #0f172a;
+    --text-sec: #64748b;
+    --text-ter: #94a3b8;
+    --border: rgba(148, 163, 184, 0.2);
+    --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+    --radius-xl: 28px;
+    --radius-lg: 20px;
+    --radius-md: 14px;
+    --font-main: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    --ease-elastic: cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+[data-theme="dark"] {
+    --primary: #818cf8;
+    --primary-dark: #6366f1;
+    --primary-glow: rgba(129, 140, 248, 0.3);
+    --bg-body: #0f172a;
+    --bg-card: rgba(30, 41, 59, 0.7);
+    --bg-glass-panel: rgba(15, 23, 42, 0.9);
+    --text-main: #f1f5f9;
+    --text-sec: #94a3b8;
+    --text-ter: #475569;
+    --border: rgba(255, 255, 255, 0.08);
+    --shadow-lg: 0 20px 40px -10px rgba(0,0,0,0.6);
+}
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; user-select: none; }
+html, body { height: 100%; overflow-x: hidden; }
+body {
+    margin: 0; padding: 0;
+    font-family: var(--font-main);
+    background: var(--bg-body);
+    color: var(--text-main);
+    transition: background 0.4s ease, color 0.4s ease;
+    background-image:
+        radial-gradient(circle at 0% 0%, rgba(99, 102, 241, 0.15), transparent 50%),
+        radial-gradient(circle at 100% 100%, rgba(16, 185, 129, 0.1), transparent 50%);
+    background-attachment: fixed;
+}
+.container {
+    max-width: 460px; margin: 0 auto;
+    padding: calc(16px + env(safe-area-inset-top)) 20px calc(40px + env(safe-area-inset-bottom));
+    min-height: 100vh;
+    display: flex; flex-direction: column;
+}
+.topbar {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 24px; padding-top: 10px;
+}
+.brand h1 { margin: 0; font-size: 22px; font-weight: 800; letter-spacing: -0.5px; }
+.brand-badge {
+    font-size: 11px; color: #fff; background: var(--primary);
+    padding: 3px 8px; border-radius: 100px; margin-left: 8px;
+    vertical-align: middle; font-weight: 700; box-shadow: 0 2px 8px var(--primary-glow);
+}
+.nav-actions { display: flex; gap: 12px; }
+.icon-btn {
+    width: 44px; height: 44px; border-radius: 50%; border: 1px solid var(--border);
+    background: var(--bg-card); color: var(--text-main);
+    display: grid; place-items: center; cursor: pointer; font-size: 18px;
+    transition: 0.2s var(--ease-elastic); backdrop-filter: blur(10px);
+}
+.icon-btn:active { transform: scale(0.9); }
+.card {
+    background: var(--bg-card);
+    backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-sm);
+    padding: 24px; margin-bottom: 20px;
+    position: relative; overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.card:hover { transform: translateY(-2px); box-shadow: var(--shadow-lg); }
+.mode-tabs {
+    display: flex; background: rgba(0,0,0,0.04);
+    padding: 5px; border-radius: 18px; margin-bottom: 24px;
+    position: relative; overflow: hidden;
+}
+[data-theme="dark"] .mode-tabs { background: rgba(255,255,255,0.08); }
+.tab {
+    flex: 1; text-align: center; padding: 12px 0; font-size: 13px; font-weight: 700;
+    color: var(--text-sec); border-radius: 14px; cursor: pointer; z-index: 2;
+    transition: 0.3s;
+}
+.tab.active {
+    background: var(--bg-card); color: var(--primary);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+.timer-section { position: relative; margin: 10px 0 30px; text-align: center; }
+.timer-wrap {
+    width: 260px; height: 260px; margin: 0 auto; position: relative;
+    filter: drop-shadow(0 10px 30px var(--primary-glow));
+}
+.timer-svg { transform: rotate(-90deg); width: 100%; height: 100%; overflow: visible; }
+.timer-track { fill: none; stroke: var(--border); stroke-width: 12; stroke-linecap: round; }
+.timer-progress {
+    fill: none; stroke: url(#gradientMain); stroke-width: 12; stroke-linecap: round;
+    stroke-dasharray: 722; stroke-dashoffset: 722;
+    transition: stroke-dashoffset 1s linear;
+}
+.timer-content {
+    position: absolute; inset: 0; display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+}
+.timer-val {
+    font-size: 44px; font-weight: 800; font-variant-numeric: tabular-nums;
+    letter-spacing: -2px; line-height: 1; margin-bottom: 6px;
+    background: linear-gradient(135deg, var(--text-main), var(--text-sec));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+}
+.timer-sub { font-size: 14px; font-weight: 600; color: var(--text-sec); margin-bottom: 10px; }
+.timer-hint {
+    font-size: 12px; color: var(--text-ter); font-weight: 600;
+    background: rgba(0,0,0,0.04);
+    padding: 8px 12px; border-radius: 999px;
+    display: inline-flex; gap: 8px; align-items: center;
+    border: 1px solid var(--border);
+}
+[data-theme="dark"] .timer-hint { background: rgba(255,255,255,0.06); }
+.status-badge {
+    padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 700;
+    display: inline-flex; align-items: center; gap: 6px;
+    background: rgba(0,0,0,0.05); color: var(--text-sec);
+    transition: 0.3s;
+    margin-bottom: 12px;
+}
+.status-badge.fasting { background: var(--success-glow); color: var(--success); }
+.status-badge.eating { background: var(--primary-glow); color: var(--primary); }
+.status-badge.warn { background: rgba(245, 158, 11, 0.15); color: var(--warning); }
+.pulse-dot { width: 8px; height: 8px; border-radius: 50%; background: currentColor; animation: pulse 2s infinite; }
+.meal-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 18px; }
+.meal-card {
+    background: var(--bg-card); border: 1px solid var(--border);
+    border-radius: var(--radius-lg); padding: 18px;
+    display: flex; flex-direction: column; align-items: center; text-align: center;
+    transition: 0.3s; cursor: pointer; position: relative;
+    min-height: 110px;
+}
+.meal-card.active { border-color: var(--primary); box-shadow: 0 0 0 2px var(--primary-glow); }
+.meal-card.done { border-color: var(--success); opacity: 0.96; }
+.meal-card:active { transform: scale(0.96); }
+.meal-emoji { font-size: 32px; margin-bottom: 10px; transition: 0.3s var(--ease-elastic); }
+.meal-card:hover .meal-emoji { transform: scale(1.2) rotate(10deg); }
+.meal-title { font-weight: 700; font-size: 15px; margin-bottom: 4px; display:flex; align-items:center; gap:8px; justify-content:center; }
+.meal-time { font-size: 12px; color: var(--text-ter); font-weight: 600; }
+.mini-badge {
+    font-size: 10px; font-weight: 900;
+    padding: 4px 8px; border-radius: 999px;
+    background: rgba(0,0,0,0.05);
+    border: 1px solid var(--border);
+    color: var(--text-sec);
+}
+[data-theme="dark"] .mini-badge { background: rgba(255,255,255,0.06); }
+.deadline-chip {
+    margin-top: 10px;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 6px 10px;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    background: rgba(0,0,0,0.04);
+    color: var(--text-sec);
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap;
+}
+[data-theme="dark"] .deadline-chip { background: rgba(255,255,255,0.06); }
+.deadline-chip.over { color: var(--danger); border-color: rgba(239,68,68,0.25); background: rgba(239,68,68,0.08); }
+.deadline-chip.ok { color: var(--success); border-color: rgba(16,185,129,0.25); background: rgba(16,185,129,0.08); }
+.metrics-row { display: grid; grid-template-columns: 1.2fr 1fr; gap: 16px; margin-bottom: 20px; }
+.mini-control {
+    display: flex; justify-content: space-between; align-items: center;
+    background: rgba(0,0,0,0.03); border-radius: 12px; padding: 6px; margin-top: 10px;
+}
+[data-theme="dark"] .mini-control { background: rgba(255,255,255,0.06); }
+.circle-btn {
+    width: 32px; height: 32px; border-radius: 10px; border: none;
+    background: #fff; color: var(--text-main); font-weight: bold;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05); cursor: pointer;
+}
+[data-theme="dark"] .circle-btn { background: #334155; color: var(--text-main); }
+.weight-inp {
+    width: 70px; background: transparent; border: none; text-align: center;
+    font-weight: 800; font-size: 16px; color: var(--text-main);
+}
+.stats-card { padding-bottom: 16px; }
+.stats-header { display: flex; justify-content: space-around; margin-bottom: 18px; }
+.stat-box { text-align: center; }
+.stat-num { font-size: 20px; font-weight: 800; display: block; }
+.stat-lbl { font-size: 11px; color: var(--text-sec); text-transform: uppercase; letter-spacing: 0.5px; font-weight: 700; margin-top: 4px; }
+.chart-container {
+    display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px;
+    height: 100px; align-items: end; padding: 0 10px;
+}
+.chart-bar-wrap { display: flex; flex-direction: column; align-items: center; gap: 8px; cursor: pointer; }
+.chart-bar {
+    width: 8px; border-radius: 10px; background: var(--border);
+    transition: height 1s var(--ease-elastic), background 0.3s;
+    min-height: 6px; position: relative;
+}
+.chart-bar.filled { background: var(--success); box-shadow: 0 0 10px var(--success-glow); }
+.chart-bar.current { background: var(--primary); }
+.chart-day { font-size: 11px; color: var(--text-ter); font-weight: 700; }
+.overlay {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px);
+    z-index: 99; opacity: 0; pointer-events: none; transition: 0.4s;
+}
+.overlay.visible { opacity: 1; pointer-events: auto; }
+.bottom-sheet {
+    position: fixed; bottom: 0; left: 0; right: 0;
+    background: var(--bg-glass-panel); backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px);
+    border-radius: 30px 30px 0 0; padding: 26px 20px calc(26px + env(safe-area-inset-bottom));
+    z-index: 100; transform: translateY(110%); transition: 0.5s var(--ease-elastic);
+    box-shadow: 0 -10px 40px rgba(0,0,0,0.2);
+    max-width: 600px; margin: 0 auto;
+    max-height: min(82vh, 760px);
+    overflow: auto;
+}
+.bottom-sheet.visible { transform: translateY(0); }
+.sheet-head { display:flex; justify-content:space-between; align-items:center; gap: 12px; margin-bottom: 18px; }
+.sheet-head h2 { margin:0; font-size: 20px; letter-spacing: -0.3px; }
+.sheet-close {
+    background:none; border:none; font-size: 26px; color: var(--text-ter); cursor:pointer;
+    width: 40px; height: 40px; border-radius: 12px;
+    display: grid; place-items: center;
+}
+.sheet-close:active { transform: scale(0.96); }
+.input-box {
+    width: 100%; padding: 16px; border-radius: 16px; border: 1px solid var(--border);
+    background: rgba(0,0,0,0.03); font-size: 16px; color: var(--text-main);
+    margin-bottom: 12px; transition: 0.3s;
+}
+[data-theme="dark"] .input-box { background: rgba(255,255,255,0.06); }
+.input-box:focus { background: var(--bg-card); border-color: var(--primary); box-shadow: 0 0 0 4px var(--primary-glow); }
+textarea.input-box { resize:none; }
+.btn {
+    width: 100%; padding: 16px; border: none; border-radius: 16px;
+    font-size: 16px; font-weight: 800; cursor: pointer;
+    display: flex; justify-content: center; align-items: center; gap: 8px;
+    transition: 0.2s; position: relative;
+}
+.btn:active { transform: scale(0.97); }
+.btn-primary { background: var(--primary); color: white; box-shadow: 0 8px 20px var(--primary-glow); }
+.btn-primary:hover { background: var(--primary-dark); }
+.btn-outline { background: transparent; border: 2px solid var(--border); color: var(--text-main); }
+.btn-text { background: transparent; color: var(--text-sec); font-size: 14px; margin-top: 10px; font-weight: 700; }
+.toast {
+    position: fixed; top: calc(20px + env(safe-area-inset-top)); left: 50%;
+    transform: translateX(-50%) scale(0.9); opacity: 0; pointer-events: none;
+    background: rgba(15, 23, 42, 0.9); color: white;
+    padding: 12px 18px; border-radius: 50px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    display: flex; align-items: center; gap: 10px; z-index: 999;
+    transition: 0.4s var(--ease-elastic); font-weight: 700;
+    max-width: calc(100vw - 24px);
+}
+.toast.visible { transform: translateX(-50%) scale(1); opacity: 1; }
+.spinner {
+    width: 20px; height: 20px; border: 2px solid rgba(255,255,255,0.3);
+    border-top-color: #fff; border-radius: 50%; animation: spin 0.8s linear infinite; display: none;
+}
+.btn.loading .spinner { display: block; }
+.btn.loading span { display: none; }
+@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes pulse { 0% { opacity: 1; transform: scale(1); } 50% { opacity: 0.6; transform: scale(1.2); } 100% { opacity: 1; transform: scale(1); } }
+#confetti { position: fixed; inset: 0; pointer-events: none; z-index: 200; }
 
-        [data-theme="dark"] {
-            --bg-color: #000000;
-            --card-bg: #1c1c1e;
-            --text-color: #f5f5f7;
-            --secondary-bg: #2c2c2e;
-        }
+/* 认证切换 Tabs */
+.auth-tabs { display: flex; gap: 10px; margin-bottom: 20px; }
+.auth-tab {
+    flex: 1; text-align: center; padding: 10px; border-radius: 12px;
+    font-weight: 700; color: var(--text-sec); cursor: pointer;
+    background: rgba(0,0,0,0.03); border: 1px solid transparent;
+}
+[data-theme="dark"] .auth-tab { background: rgba(255,255,255,0.05); }
+.auth-tab.active {
+    background: var(--bg-card); color: var(--primary);
+    border-color: var(--primary); box-shadow: 0 2px 8px var(--primary-glow);
+}
 
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            margin: 0;
-            padding: 20px;
-            display: flex;
-            justify-content: center;
-            min-height: 100vh;
-            box-sizing: border-box;
-        }
-
-        .container {
-            width: 100%;
-            max-width: 420px;
-        }
-
-        .card {
-            background: var(--card-bg);
-            padding: 24px;
-            border-radius: 20px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-            margin-bottom: 20px;
-        }
-
-        h2 { margin-top: 0; font-size: 20px; text-align: center; }
-
-        input {
-            width: 100%;
-            padding: 14px;
-            margin: 8px 0;
-            border: 1px solid #d1d1d6;
-            border-radius: 12px;
-            box-sizing: border-box;
-            background: var(--bg-color);
-            color: var(--text-color);
-            font-size: 16px;
-        }
-
-        button {
-            width: 100%;
-            padding: 14px;
-            border: none;
-            border-radius: 12px;
-            background-color: var(--primary-color);
-            color: white;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            margin-top: 12px;
-            transition: opacity 0.2s;
-        }
-        button:active { opacity: 0.8; }
-        button.secondary { background-color: var(--secondary-bg); color: var(--text-color); }
-        button.danger { background-color: var(--danger-color); }
-        button.success { background-color: var(--success-color); }
-
-        /* 状态显示大字 */
-        .timer-box {
-            text-align: center;
-            padding: 20px 0;
-        }
-        .timer-text {
-            font-size: 48px;
-            font-weight: 700;
-            font-variant-numeric: tabular-nums;
-            margin: 10px 0;
-        }
-        .status-badge {
-            display: inline-block;
-            padding: 6px 12px;
-            border-radius: 20px;
-            background: var(--secondary-bg);
-            font-size: 14px;
-            font-weight: 500;
-        }
-
-        /* 历史记录 */
-        .history-list {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
-        .history-item {
-            display: flex;
-            justify-content: space-between;
-            padding: 12px 0;
-            border-bottom: 1px solid var(--secondary-bg);
-            font-size: 14px;
-        }
-        .history-item:last-child { border-bottom: none; }
-
-        /* 用户栏 */
-        .user-bar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 13px;
-            color: #888;
-            margin-bottom: 15px;
-        }
-        .btn-small {
-            width: auto;
-            padding: 6px 12px;
-            margin: 0 0 0 8px;
-            font-size: 12px;
-        }
-
-        #app { display: none; }
-    </style>
+/* 其他复用样式 */
+.week-list { display: flex; flex-direction: column; gap: 10px; margin-top: 8px; }
+.week-item {
+    border: 1px solid var(--border);
+    background: var(--bg-card);
+    border-radius: 16px;
+    padding: 12px 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+.week-item:active { transform: scale(0.98); }
+.week-left { display: flex; flex-direction: column; gap: 4px; }
+.week-date { font-weight: 800; font-size: 13px; }
+.week-sub { font-size: 12px; color: var(--text-sec); font-weight: 700; }
+.pill {
+    font-size: 11px;
+    font-weight: 800;
+    padding: 6px 10px;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    color: var(--text-sec);
+    background: rgba(0,0,0,0.03);
+    white-space: nowrap;
+}
+[data-theme="dark"] .pill { background: rgba(255,255,255,0.06); }
+.pill.ok { color: var(--success); border-color: rgba(16,185,129,0.25); background: rgba(16,185,129,0.08); }
+.pill.run { color: var(--primary); border-color: rgba(99,102,241,0.25); background: rgba(99,102,241,0.08); }
+.pill.miss { color: var(--danger); border-color: rgba(239,68,68,0.25); background: rgba(239,68,68,0.08); }
+.detail-box {
+    border: 1px solid var(--border);
+    background: rgba(0,0,0,0.02);
+    border-radius: 18px;
+    padding: 14px;
+    margin-top: 12px;
+}
+[data-theme="dark"] .detail-box { background: rgba(255,255,255,0.04); }
+.detail-row { display:flex; justify-content: space-between; gap: 10px; padding: 8px 0; border-bottom: 1px dashed var(--border); font-weight: 700; }
+.detail-row:last-child { border-bottom: none; }
+.detail-k { color: var(--text-sec); font-size: 12px; }
+.detail-v { color: var(--text-main); font-size: 12px; text-align: right; }
+.upload-card {
+    border: 1px solid var(--border);
+    background: rgba(0,0,0,0.02);
+    border-radius: 18px;
+    padding: 14px;
+    display:flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+[data-theme="dark"] .upload-card { background: rgba(255,255,255,0.04); }
+.upload-row { display:flex; justify-content: space-between; align-items:center; gap: 10px; }
+.upload-h { font-weight: 900; font-size: 13px; }
+.upload-sub { font-size: 11px; color: var(--text-ter); font-weight: 700; line-height: 1.35; }
+.switch {
+    width: 50px; height: 30px;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    background: rgba(0,0,0,0.06);
+    position: relative;
+    cursor: pointer;
+    flex: none;
+    transition: 0.25s;
+}
+[data-theme="dark"] .switch { background: rgba(255,255,255,0.08); }
+.switch::after {
+    content:""; width: 24px; height: 24px; border-radius: 50%; background: #fff;
+    position:absolute; top: 2.5px; left: 3px; box-shadow: 0 6px 16px rgba(0,0,0,0.15);
+    transition: 0.25s var(--ease-elastic);
+}
+[data-theme="dark"] .switch::after { background: #e2e8f0; }
+.switch.on { background: rgba(99,102,241,0.25); border-color: rgba(99,102,241,0.35); }
+.switch.on::after { left: 22px; background: var(--primary); }
+.img-preview {
+    width: 100%; border-radius: 16px; border: 1px solid var(--border);
+    overflow: hidden; background: rgba(0,0,0,0.03); display:none;
+}
+[data-theme="dark"] .img-preview { background: rgba(255,255,255,0.06); }
+.img-preview img { width: 100%; height: auto; display:block; }
+.two-col { display:grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.small-btn { padding: 12px; border-radius: 14px; font-weight: 900; font-size: 14px; }
+.meal-media-grid { display:grid; grid-template-columns: 1fr; gap: 12px; margin-top: 10px; }
+.meal-media-box {
+    border: 1px solid var(--border); border-radius: 16px; background: rgba(0,0,0,0.02); padding: 12px;
+}
+[data-theme="dark"] .meal-media-box { background: rgba(255,255,255,0.04); }
+.meal-media-head { display:flex; justify-content: space-between; align-items:center; gap: 10px; margin-bottom: 10px; }
+.meal-media-head .t { font-weight: 900; font-size: 13px; }
+.meal-media-head .s { font-size: 11px; color: var(--text-ter); font-weight: 800; }
+.meal-media-img {
+    width: 100%; border-radius: 14px; border: 1px solid var(--border); overflow:hidden;
+    margin-bottom: 10px; display:none;
+}
+.meal-media-img img { width:100%; height:auto; display:block; }
+.meal-media-note { font-size: 12px; color: var(--text-sec); font-weight: 700; line-height:1.5; white-space: pre-wrap; }
+/* 启动屏 */
+.launch-splash {
+    position: fixed; inset: 0; z-index: 2000;
+    background: linear-gradient(135deg, #4f46e5, #ec4899);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    color: #fff; text-align: center;
+    opacity: 0; pointer-events: none; transition: opacity 0.6s ease;
+}
+.launch-splash.active { opacity: 1; pointer-events: auto; }
+.launch-title { font-size: 32px; font-weight: 900; margin-bottom: 10px; animation: bounceIn 0.8s; }
+.launch-sub { font-size: 16px; font-weight: 600; opacity: 0.9; animation: fadeIn 1.2s; }
+@keyframes bounceIn {
+    0% { transform: scale(0.3); opacity: 0; }
+    50% { transform: scale(1.05); }
+    70% { transform: scale(0.9); }
+    100% { transform: scale(1); opacity: 1; }
+}
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+</style>
 </head>
 <body>
-
+<canvas id="confetti"></canvas>
+<div class="launch-splash" id="launchSplash">
+<div style="font-size:60px; margin-bottom:10px;"> 🎉 </div>
+<div class="launch-title">健康饮食 Pro 1.0</div>
+<div class="launch-sub">全新升级 · 极速体验 · Supabase 驱动</div>
+</div>
 <div class="container">
-    
-    <div id="authForm" class="card">
-        <h2>👋 欢迎使用 16+8 助手</h2>
-        <input type="email" id="email" placeholder="邮箱地址">
-        <input type="password" id="password" placeholder="设置密码">
-        <button onclick="window.login()">登录</button>
-        <button class="secondary" onclick="window.register()">注册账号</button>
-        <p style="text-align:center; font-size:12px; color:#999; margin-top:15px;">
+<div class="topbar">
+<div class="brand">
+<h1>健康饮食 <span style="font-weight:300">Pro</span><span class="brand-badge">Supa</span></h1>
+</div>
+<div class="nav-actions">
+<button class="icon-btn" id="themeBtn" title="主题"> 🌓 </button>
+<button class="icon-btn" id="userBtn" title="云同步"> 👤 </button>
+</div>
+</div>
+<div class="mode-tabs">
+<div class="tab" data-mode="12">12:12<br><span style="font-size:10px; font-weight:600; opacity:0.65">新手</span></div>
+<div class="tab" data-mode="14">14:10<br><span style="font-size:10px; font-weight:600; opacity:0.65">日常</span></div>
+<div class="tab active" data-mode="16">16:8<br><span style="font-size:10px; font-weight:600; opacity:0.65">燃脂</span></div>
+<div class="tab" data-mode="18">18:6<br><span style="font-size:10px; font-weight:600; opacity:0.65">进阶</span></div>
+</div>
+<div class="card timer-section">
+<div class="timer-wrap">
+<svg class="timer-svg" viewBox="0 0 240 240">
+<defs>
+<linearGradient id="gradientMain" x1="0%" y1="0%" x2="100%" y2="100%">
+<stop offset="0%" stop-color="#6366f1" />
+<stop offset="100%" stop-color="#a855f7" />
+</linearGradient>
+<linearGradient id="gradientSuccess" x1="0%" y1="0%" x2="100%" y2="100%">
+<stop offset="0%" stop-color="#10b981" />
+<stop offset="100%" stop-color="#34d399" />
+</linearGradient>
+</defs>
+<circle class="timer-track" cx="120" cy="120" r="115"></circle>
+<circle class="timer-progress" id="progressRing" cx="120" cy="120" r="115"></circle>
+</svg>
+<div class="timer-content">
+<div class="timer-val" id="timerDisplay">--:--</div>
+<div class="timer-sub" id="timerLabel">准备开始</div>
+<div class="status-badge" id="statusBadge">
+<div class="pulse-dot"></div>
+<span id="statusText">空腹期</span>
+</div>
+<div class="timer-hint" id="timerHint" style="display:none;"> ⏱️  <span id="timerHintText">—</span></div>
+</div>
+</div>
+</div>
+<div class="meal-grid">
+<div class="meal-card" id="btnStartFast">
+<div class="meal-emoji"> 🍳 </div>
+<div class="meal-title">
+第一餐 <span class="mini-badge" id="mediaBadgeStart" style="display:none;"> 📷 </span>
+</div>
+<div class="meal-time" id="startLabel">点击开始打卡</div>
+</div>
+<div class="meal-card" id="btnEndFast">
+<div class="meal-emoji"> 🌙 </div>
+<div class="meal-title">
+最后一餐 <span class="mini-badge" id="mediaBadgeEnd" style="display:none;"> 📷 </span>
+</div>
+<div class="meal-time" id="endLabel">等待开始</div>
+<div class="deadline-chip" id="deadlineChip" style="display:none;"> ⏳  最晚可进食至：--:--</div>
+</div>
+</div>
+<div class="card" style="padding: 18px 18px; margin-top: -6px;">
+<div style="font-size:12px; color:var(--text-sec); font-weight:800; margin-bottom:10px;"> 🗂️  今日资料 / 备注（可同步）</div>
+<textarea id="noteInput" class="input-box" rows="3" placeholder="例如：今天吃了什么、训练/作息、身体感受…（纯文本）"></textarea>
+<button class="btn btn-outline" id="noteSaveBtn"><span>保存资料</span><div class="spinner"></div></button>
+<div style="font-size:11px; color:var(--text-ter); margin-top:8px; font-weight:700;">提示：登录后会自动云端同步（跨设备实时一致）。</div>
+</div>
+<div class="metrics-row">
+<div class="card" style="margin:0; display:flex; flex-direction:column; justify-content:center;">
+<div style="font-size:12px; color:var(--text-sec); font-weight:800; margin-bottom:8px;"> 💧  饮水 (杯)</div>
+<div class="mini-control">
+<button class="circle-btn" id="waterMinus">-</button>
+<span style="font-weight:900; font-size:20px; color:var(--primary);" id="waterCount">0</span>
+<button class="circle-btn" id="waterPlus" style="color:var(--primary);">+</button>
+</div>
+</div>
+<div class="card" style="margin:0; display:flex; flex-direction:column; justify-content:center;">
+<div style="font-size:12px; color:var(--text-sec); font-weight:800; margin-bottom:8px;"> ⚖️  体重 (kg)</div>
+<div class="mini-control">
+<input type="number" class="weight-inp" id="weightInput" placeholder="0.0" step="0.1">
+<button class="circle-btn" id="weightSaveBtn" style="width:auto; padding:0 12px; font-size:12px;">保存</button>
+</div>
+</div>
+</div>
+<div class="card stats-card">
+<div class="stats-header">
+<div class="stat-box">
+<span class="stat-num" id="statStreak">0</span>
+<span class="stat-lbl"> 🔥  连续天数</span>
+</div>
+<div class="stat-box">
+<span class="stat-num" id="statTotal">0</span>
+<span class="stat-lbl"> 📅  累计打卡</span>
+</div>
+<div class="stat-box">
+<span class="stat-num" id="statRate">0%</span>
+<span class="stat-lbl"> 📈  完成率</span>
+</div>
+</div>
+<div style="height:1px; background:var(--border); margin-bottom:16px;"></div>
+<div class="chart-container" id="weekChart"></div>
+</div>
+<div class="card" style="padding: 18px 18px; margin-top: -6px;">
+<div style="display:flex; justify-content:space-between; align-items:center; gap: 12px;">
+<div>
+<div style="font-size:12px; color:var(--text-sec); font-weight:900;"> 📚  近一周记录</div>
+<div style="font-size:11px; color:var(--text-ter); font-weight:700; margin-top:4px;">含打卡、饮水、体重、资料备注、餐图与留言（登录后可跨设备实时同步）</div>
+</div>
+<button class="icon-btn" id="weekBtn" title="查看近一周" style="width:46px; height:46px;"> 🗓️ </button>
+</div>
+</div>
+<div style="margin-top:auto; text-align:center;">
+<button class="btn-text" id="resetBtn">重置今日状态</button>
+</div>
+</div>
+<div class="overlay" id="overlay"></div>
+
+<div class="bottom-sheet" id="authSheet">
+    <div class="sheet-head">
+        <h2 id="authTitle"> ☁️  登录账号</h2>
+        <button class="sheet-close" id="authClose">&times;</button>
+    </div>
+
+    <div class="auth-tabs">
+        <div class="auth-tab active" id="tabLogin">登录</div>
+        <div class="auth-tab" id="tabRegister">注册</div>
+    </div>
+
+    <div id="authForm">
+        <input type="email" class="input-box" id="authEmail" placeholder="电子邮箱">
+        <input type="password" class="input-box" id="authPwd" placeholder="密码 (6位以上)">
+        <button class="btn btn-primary" id="btnAuthAction" style="margin-bottom:12px;">
+            <span id="btnAuthText">登录 / 同步</span><div class="spinner"></div>
+        </button>
+        
+        <div style="text-align:center; font-size:12px; color:var(--text-ter); margin-top:10px;">
             国内直连版 (Powered by Supabase)
-        </p>
-    </div>
+        </div>
 
-    <div id="app">
-        <div class="user-bar">
-            <span id="userEmailDisplay">未登录</span>
-            <div>
-                <button class="btn-small secondary" onclick="window.syncToCloud()">☁️ 同步</button>
-                <button class="btn-small danger" onclick="window.logout()">退出</button>
+        <div class="upload-card" style="margin-top:14px;">
+            <div class="upload-row">
+                <div>
+                    <div class="upload-h"> 📷  上传图片 & 留言</div>
+                    <div class="upload-sub">可选。登录后数据将保存到云端数据库。</div>
+                </div>
+                <div class="switch" id="toggleMealMedia"></div>
             </div>
-        </div>
-
-        <div class="card">
-            <div class="timer-box">
-                <div id="statusBadge" class="status-badge">加载中...</div>
-                <div id="timerDisplay" class="timer-text">--:--:--</div>
-                <div id="targetTime" style="color:#888; font-size:14px;">目标时间: --:--</div>
-            </div>
-            <button id="actionBtn" onclick="window.toggleEating()">开始进食</button>
-        </div>
-
-        <div class="card">
-            <h3 style="margin-top:0; font-size:16px;">最近记录</h3>
-            <ul id="historyList" class="history-list">
-                <li class="history-item" style="color:#999;">暂无记录</li>
-            </ul>
-        </div>
-
-        <div style="text-align: center; margin-top: 20px;">
-            <button class="secondary" style="width:auto;" onclick="window.toggleTheme()">🌗 切换深色模式</button>
+            <div class="upload-sub" id="toggleHint">未登录：仅本机生效；登录后：多端同步。</div>
         </div>
     </div>
 
+    <div id="userPanel" style="display:none; text-align:center; padding:10px 0 0;">
+        <div style="font-size:56px; margin-bottom:10px; animation: pulse 3s infinite;"> 🎉 </div>
+        <h3 id="userEmailDisplay" style="margin:0 0 6px;"></h3>
+        <p style="color:var(--text-sec); font-size:14px; margin: 0 0 18px; font-weight:700;">数据已实时备份至 Supabase Cloud</p>
+        <div class="upload-card" style="text-align:left;">
+            <div class="upload-row">
+                <div>
+                    <div class="upload-h"> 📷  上传图片 & 留言</div>
+                    <div class="upload-sub">已登录：设置已同步。</div>
+                </div>
+                <div class="switch" id="toggleMealMedia2"></div>
+            </div>
+        </div>
+        <button class="btn btn-outline" style="border-color:var(--danger); color:var(--danger); margin-bottom: 10px;" id="btnLogout">退出登录</button>
+        <button class="btn btn-outline" id="btnForcePull">从云端强制拉取</button>
+    </div>
+</div>
+
+<div class="bottom-sheet" id="weekSheet">
+<div class="sheet-head">
+<h2> 🗓️  近一周打卡</h2>
+<button class="sheet-close" id="weekClose">&times;</button>
+</div>
+<div style="font-size:12px; color:var(--text-sec); font-weight:800; margin-bottom:10px;">
+点击某一天查看详情（含餐图、留言与资料备注）
+</div>
+<div class="week-list" id="weekList"></div>
+<div id="dayDetail" class="detail-box" style="display:none;">
+<div style="font-weight:900; margin-bottom:8px; font-size:13px;" id="detailTitle">—</div>
+<div class="detail-row"><div class="detail-k">模式</div><div class="detail-v" id="d_mode">—</div></div>
+<div class="detail-row"><div class="detail-k">第一餐</div><div class="detail-v" id="d_start">—</div></div>
+<div class="detail-row"><div class="detail-k">最后一餐</div><div class="detail-v" id="d_end">—</div></div>
+<div class="detail-row"><div class="detail-k">进食窗口</div><div class="detail-v" id="d_eatwin">—</div></div>
+<div class="detail-row"><div class="detail-k">饮水</div><div class="detail-v" id="d_water">—</div></div>
+<div class="detail-row"><div class="detail-k">体重</div><div class="detail-v" id="d_weight">—</div></div>
+<div class="detail-row"><div class="detail-k">资料备注</div><div class="detail-v" id="d_note">—</div></div>
+<div class="meal-media-grid">
+<div class="meal-media-box">
+<div class="meal-media-head">
+<div class="t"> 🍳  第一餐：图片/留言</div>
+<div class="s" id="d_s_time">—</div>
+</div>
+<div class="meal-media-img" id="d_s_img"><img alt="第一餐图片"></div>
+<div class="meal-media-note" id="d_s_note">—</div>
+</div>
+<div class="meal-media-box">
+<div class="meal-media-head">
+<div class="t"> 🌙  最后一餐：图片/留言</div>
+<div class="s" id="d_e_time">—</div>
+</div>
+<div class="meal-media-img" id="d_e_img"><img alt="最后一餐图片"></div>
+<div class="meal-media-note" id="d_e_note">—</div>
+</div>
+</div>
+<div style="margin-top:10px; font-size:11px; color:var(--text-ter); font-weight:700;" id="d_sync">—</div>
+</div>
+</div>
+<div class="bottom-sheet" id="viewMealSheet">
+<div class="sheet-head">
+<h2 id="viewMealTitle"> 🍳  打卡详情</h2>
+<button class="sheet-close" id="viewMealClose">&times;</button>
+</div>
+
+<div class="upload-card">
+<div class="upload-row">
+<div class="upload-h"> 🕒  打卡时间</div>
+<div class="upload-sub" id="viewMealTimeStr" style="font-size:14px; font-weight:700; color:var(--primary);">--:--</div>
+</div>
+</div>
+<div class="meal-media-box" style="margin-bottom:12px;">
+<div class="meal-media-head">
+<div class="t"> 📷  图片记录</div>
+</div>
+<div class="meal-media-img" id="viewMealImgBox" style="display:block;">
+<img id="viewMealImgTag" alt="图片" />
+</div>
+<div class="upload-sub" id="viewMealNoImg" style="display:none; text-align:center; padding:10px;">暂无图片</div>
+</div>
+<div class="upload-card">
+<div class="upload-h" style="margin-bottom:6px;"> 💬  留言备注</div>
+<div class="meal-media-note" id="viewMealNoteStr">暂无留言</div>
+</div>
+<button class="btn btn-outline" id="viewMealOkBtn">关闭</button>
+</div>
+<div class="bottom-sheet" id="mealSheet">
+<div class="sheet-head">
+<h2 id="mealSheetTitle"> 🍳  打卡</h2>
+<button class="sheet-close" id="mealClose">&times;</button>
+</div>
+<div class="upload-card">
+<div class="upload-h" id="mealSheetSub">—</div>
+<div class="upload-sub" id="mealSheetHint">可选：添加食物图片与留言。登录后会同步到云端。</div>
+</div>
+<div class="upload-card" id="mealMediaArea">
+<div class="upload-row">
+<div>
+<div class="upload-h"> 📷  食物图片（可选）</div>
+<div class="upload-sub">会自动压缩并以 Base64 写入数据库。</div>
+</div>
+<button class="btn btn-outline small-btn" id="btnPickImg" style="width:auto;"><span>选择图片</span><div class="spinner"></div></button>
+</div>
+<input id="mealImgInput" type="file" accept="image/*" capture="environment" style="display:none;">
+<div class="img-preview" id="mealImgPreview"><img alt="预览"></div>
+<div class="two-col">
+<button class="btn btn-outline small-btn" id="btnRemoveImg"><span>移除图片</span><div class="spinner"></div></button>
+<button class="btn btn-outline small-btn" id="btnCompressInfo"><span>压缩说明</span><div class="spinner"></div></button>
+</div>
+<div class="upload-h"> 💬  留言（可选）</div>
+<textarea id="mealMsgInput" class="input-box" rows="3" placeholder="例如：今天吃了鸡胸/沙拉、心情、训练强度…（纯文本）"></textarea>
+<div class="upload-sub" id="mealCloudWarn" style="display:none;">
+⚠️  未登录：图片/留言会先保存在本机；登录后才会同步到云端。
+</div>
+<div class="upload-sub" id="mealSizeWarn" style="display:none;">
+⚠️  图片过大：已尽力压缩，仍可能因数据库限制无法保存图片。
+</div>
+</div>
+<button class="btn btn-primary" id="mealConfirmBtn"><span>确认打卡</span><div class="spinner"></div></button>
+<button class="btn btn-outline" id="mealSkipBtn" style="margin-top:10px;"><span>不添加图片/留言，直接打卡</span><div class="spinner"></div></button>
+</div>
+<div class="toast" id="toast">
+<span id="toastIcon"> ✅ </span>
+<span id="toastMsg">操作成功</span>
 </div>
 
 <script type="module">
-    // -----------------------------------------------------------
-    // 1. 初始化配置 (Supabase)
-    // -----------------------------------------------------------
-    import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 
-    // 你的 Supabase URL
-    const supabaseUrl = 'https://mjssiorvprbeuvdnbxkw.supabase.co'
-    // 你的 Supabase Key
-    const supabaseKey = 'sb_publishable_0nfL1jDXViLVQUffJfKSFA_vSdCXrco'
+/* ================= 配置区 ================= */
+// 填入你的 Supabase URL 和 Key
+const supabaseUrl = 'https://mjssiorvprbeuvdnbxkw.supabase.co'
+const supabaseKey = 'sb_publishable_0nfL1jDXViLVQUffJfKSFA_vSdCXrco'
+const supabase = createClient(supabaseUrl, supabaseKey)
+
+const MODES = {
+    12: { eat: 12, fast: 12 },
+    14: { eat: 10, fast: 14 },
+    16: { eat: 8, fast: 16 },
+    18: { eat: 6, fast: 18 }
+};
+
+/* ================= 工具函数 ================= */
+const STORAGE_KEY = 'fasting_pro_v5_state';
+const PREF_KEY = 'fasting_pro_v5_prefs';
+const HISTORY_KEY = 'fasting_pro_v5_history'; // 新增：本地历史存储
+const TZ = Intl.DateTimeFormat().resolvedOptions().timeZone || 'local';
+const $ = id => document.getElementById(id);
+const $$ = sel => document.querySelectorAll(sel);
+const pad2 = n => String(n).padStart(2, '0');
+const dateKeyLocal = (d = new Date()) => {
+    const y = d.getFullYear();
+    const m = pad2(d.getMonth() + 1);
+    const day = pad2(d.getDate());
+    return `${y}-${m}-${day}`;
+};
+const fmtTime = (ms) => {
+    if (!ms) return null;
+    const d = new Date(ms);
+    return d.toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit', hour12: false });
+};
+const fmtDateCN = (key) => {
+    const [y, m, d] = key.split('-');
+    return `${y}/${m}/${d}`;
+};
+const msToHMS = (ms) => {
+    const sign = ms < 0 ? '-' : '';
+    const x = Math.abs(ms);
+    const h = Math.floor(x / 3600000);
+    const m = Math.floor((x % 3600000) / 60000);
+    const s = Math.floor((x % 60000) / 1000);
+    return `${sign}${h}:${pad2(m)}:${pad2(s)}`;
+};
+const showToast = (msg, icon = ' ✅ ', type = 'normal') => {
+    const t = $('toast');
+    $('toastMsg').innerText = msg;
+    $('toastIcon').innerText = icon;
+    t.style.background = type === 'error'
+        ? 'var(--danger)'
+        : (document.documentElement.getAttribute('data-theme') === 'dark' ? 'rgba(255,255,255,0.92)' : 'rgba(15, 23, 42, 0.92)');
+    t.style.color = type === 'error'
+        ? '#fff'
+        : (document.documentElement.getAttribute('data-theme') === 'dark' ? '#000' : '#fff');
+    t.classList.add('visible');
+    setTimeout(() => t.classList.remove('visible'), 2500);
+};
+const fireConfetti = () => {
+    const canvas = $('confetti');
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    const particles = [];
+    const colors = ['#6366f1', '#10b981', '#f59e0b', '#ef4444'];
+    for(let i=0; i<120; i++) {
+        particles.push({
+            x: canvas.width / 2, y: canvas.height / 2,
+            vx: (Math.random() - 0.5) * 15, vy: (Math.random() - 0.5) * 15 - 8,
+            color: colors[Math.floor(Math.random() * colors.length)],
+            life: 150
+        });
+    }
+    const animate = () => {
+        ctx.clearRect(0,0,canvas.width,canvas.height);
+        let active = false;
+        particles.forEach(p => {
+            if(p.life > 0) {
+                p.x += p.vx; p.y += p.vy; p.vy += 0.3; p.life--;
+                ctx.fillStyle = p.color; ctx.fillRect(p.x, p.y, 7, 7);
+                active = true;
+            }
+        });
+        if(active) requestAnimationFrame(animate);
+        else ctx.clearRect(0,0,canvas.width,canvas.height);
+    };
+    animate();
+};
+const btnLoading = (id, loading) => {
+    const btn = $(id);
+    if (!btn) return;
+    if(loading) { btn.classList.add('loading'); btn.disabled = true; }
+    else { btn.classList.remove('loading'); btn.disabled = false; }
+};
+const toggleSheet = (id, show) => {
+    const s = $(id), o = $('overlay');
+    if (show) { s.classList.add('visible'); o.classList.add('visible'); }
+    else { s.classList.remove('visible'); o.classList.remove('visible'); }
+};
+const toggleAuth = (show) => toggleSheet('authSheet', show);
+const toggleWeek = (show) => toggleSheet('weekSheet', show);
+const toggleMeal = (show) => toggleSheet('mealSheet', show);
+const toggleViewMeal = (show) => toggleSheet('viewMealSheet', show);
+
+/* ================= 本地数据管理 ================= */
+let prefs = { mealMediaEnabled: false };
+let dayMap = {}; // 存储所有历史数据 Key: dateKey, Value: DayRecord
+let state = {    // 今日状态 (快捷访问，指向 dayMap[today])
+    dateKey: dateKeyLocal(),
+    mode: 16,
+    startTime: null,
+    endTime: null,
+    water: 0,
+    weight: null,
+    note: "",
+    startMeal: { note: "", imageBase64: "" },
+    endMeal: { note: "", imageBase64: "" },
+    updatedAt: 0
+};
+let currentUser = null;
+
+// 加载本地存储
+const loadLocal = () => {
+    try {
+        // Prefs
+        const rawPrefs = localStorage.getItem(PREF_KEY);
+        if (rawPrefs) prefs = { ...prefs, ...JSON.parse(rawPrefs) };
+        
+        // History (DayMap)
+        const rawHistory = localStorage.getItem(HISTORY_KEY);
+        if (rawHistory) dayMap = JSON.parse(rawHistory);
+        
+        // State (Today)
+        const rawState = localStorage.getItem(STORAGE_KEY);
+        if (rawState) state = { ...state, ...JSON.parse(rawState) };
+    } catch(e) { console.error("Local Load Error", e); }
+};
+
+// 保存本地存储
+const saveLocal = () => {
+    localStorage.setItem(PREF_KEY, JSON.stringify(prefs));
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
     
-    const supabase = createClient(supabaseUrl, supabaseKey)
+    // 更新 dayMap 中的今天
+    dayMap[state.dateKey] = { ...state };
+    localStorage.setItem(HISTORY_KEY, JSON.stringify(dayMap));
+    
+    syncToggleUI();
+};
 
-    // 全局状态
-    let currentUser = null;
-    let dietData = {
-        isEating: false,      // true=进食窗口, false=断食窗口
-        lastActionTime: null, // 上次操作时间戳
-        history: []           // 历史记录数组
+const ensureToday = () => {
+    const today = dateKeyLocal();
+    if (state.dateKey !== today) {
+        state = {
+            dateKey: today,
+            mode: state.mode,
+            startTime: null,
+            endTime: null,
+            water: 0,
+            weight: state.weight || null,
+            note: "",
+            startMeal: { note:"", imageBase64:"" },
+            endMeal: { note:"", imageBase64:"" },
+            updatedAt: Date.now()
+        };
+        saveLocal();
+    }
+};
+
+/* ================= Supabase 云同步 ================= */
+// 完整数据结构： { user_id: '...', data: { days: { ... }, prefs: { ... } } }
+
+const cloudSync = async () => {
+    if (!currentUser) return;
+    
+    const fullPayload = {
+        days: dayMap,
+        prefs: prefs,
+        lastSync: Date.now()
     };
 
-    // -----------------------------------------------------------
-    // 2. 认证逻辑 (Auth)
-    // -----------------------------------------------------------
-    async function initAuth() {
-        // 启动时检查用户
-        const { data: { user } } = await supabase.auth.getUser()
-        handleUserChange(user);
+    const { error } = await supabase
+        .from('diet_logs')
+        .upsert({ 
+            user_id: currentUser.id, 
+            data: fullPayload 
+        }, { onConflict: 'user_id' });
 
-        // 监听登录/退出
-        supabase.auth.onAuthStateChange((event, session) => {
-            if (event === 'SIGNED_IN') {
-                handleUserChange(session.user);
-                syncFromCloud(); // 登录后自动拉取云端数据
-            } else if (event === 'SIGNED_OUT') {
-                handleUserChange(null);
+    if (error) {
+        console.error("Cloud Sync Failed", error);
+        // showToast('云同步失败', '⚠️', 'error'); // 静默失败不打扰
+    }
+};
+
+const cloudPull = async (force = false) => {
+    if (!currentUser) return;
+
+    const { data, error } = await supabase
+        .from('diet_logs')
+        .select('data')
+        .eq('user_id', currentUser.id)
+        .single();
+
+    if (data && data.data) {
+        const cloudData = data.data;
+        
+        // 简单策略：云端如果有数据，且本地没有或者强制拉取，就覆盖
+        // 这里的合并策略可以更复杂，简单起见我们做合并
+        if (cloudData.days) dayMap = { ...dayMap, ...cloudData.days };
+        if (cloudData.prefs) prefs = { ...prefs, ...cloudData.prefs };
+        
+        // 刷新今日 State
+        const today = dateKeyLocal();
+        if (dayMap[today]) {
+            // 只有当云端的时间更新时才覆盖，防止本地刚操作被覆盖
+            if (force || (dayMap[today].updatedAt || 0) > (state.updatedAt || 0)) {
+                state = dayMap[today];
             }
-        })
-    }
-
-    function handleUserChange(user) {
-        currentUser = user;
-        if (user) {
-            $('#authForm').style.display = 'none';
-            $('#app').style.display = 'block';
-            $('#userEmailDisplay').innerText = user.email;
-            loadLocal(); // 先加载本地缓存，等待云端同步覆盖
-        } else {
-            $('#authForm').style.display = 'block';
-            $('#app').style.display = 'none';
         }
-    }
-
-    // 挂载认证函数到 window
-    // -----------------------------------------------------------
-    // 修复重点：增加了 .trim() 去除手机输入法自动添加的空格
-    // -----------------------------------------------------------
-    window.register = async () => {
-        const email = $('#email').value.trim(); // <--- 这里加了 trim()
-        const password = $('#password').value.trim(); // <--- 这里加了 trim()
         
-        if(!email || !password) return alert('请输入邮箱和密码');
-        if(!email.includes('@')) return alert('邮箱格式不正确，请检查');
-
-        const { error } = await supabase.auth.signUp({ email, password });
-        if(error) alert('注册失败: ' + error.message);
-        else alert('注册成功！');
-    }
-
-    window.login = async () => {
-        const email = $('#email').value.trim(); // <--- 这里加了 trim()
-        const password = $('#password').value.trim(); // <--- 这里加了 trim()
-
-        if(!email || !password) return alert('请输入邮箱和密码');
-
-        const { error } = await supabase.auth.signInWithPassword({ email, password });
-        if(error) alert('登录失败: ' + error.message);
-    }
-
-    window.logout = async () => {
-        await supabase.auth.signOut();
-        dietData = { isEating: false, lastActionTime: null, history: [] }; // 清空本地状态
-    }
-
-    // -----------------------------------------------------------
-    // 3. 数据同步 (Sync)
-    // -----------------------------------------------------------
-    
-    // 上传到云端
-    window.syncToCloud = async () => {
-        if (!currentUser) return alert('请先登录');
-        
-        const { error } = await supabase
-            .from('diet_logs')
-            .upsert({ 
-                user_id: currentUser.id, 
-                data: dietData 
-            }, { onConflict: 'user_id' })
-
-        if (error) {
-            console.error('同步失败', error);
-            alert('同步失败: ' + error.message);
-        } else {
-            alert('✅ 已同步到云端');
-        }
-    }
-
-    // 从云端下载
-    async function syncFromCloud() {
-        if (!currentUser) return;
-        console.log("正在从云端拉取数据...");
-
-        const { data, error } = await supabase
-            .from('diet_logs')
-            .select('data')
-            .eq('user_id', currentUser.id)
-            .single()
-
-        if (data && data.data) {
-            console.log("云端数据下载成功:", data.data);
-            dietData = data.data; // 覆盖本地数据
-            saveLocal();
-            renderUI();
-        }
-    }
-
-    // -----------------------------------------------------------
-    // 4. 业务逻辑 (16+8)
-    // -----------------------------------------------------------
-
-    function loadLocal() {
-        const local = localStorage.getItem('dietData_168');
-        if (local) {
-            dietData = JSON.parse(local);
-        }
-        renderUI();
-    }
-
-    function saveLocal() {
-        localStorage.setItem('dietData_168', JSON.stringify(dietData));
-    }
-
-    // 切换状态按钮
-    window.toggleEating = () => {
-        const now = new Date().getTime();
-        
-        if (dietData.isEating) {
-            // 结束进食 -> 开始断食
-            dietData.isEating = false;
-            dietData.lastActionTime = now;
-            dietData.history.unshift({ type: 'end', time: now });
-        } else {
-            // 开始进食
-            dietData.isEating = true;
-            dietData.lastActionTime = now;
-            dietData.history.unshift({ type: 'start', time: now });
-        }
-
         saveLocal();
         renderUI();
-        window.syncToCloud(); // 操作后自动尝试同步
+        if(force) showToast('已从云端恢复数据', '☁️');
     }
+};
 
-    // 更新界面
-    function renderUI() {
-        const btn = $('#actionBtn');
-        const badge = $('#statusBadge');
-        const targetText = $('#targetTime');
-
-        if (dietData.isEating) {
-            // 进食窗口中
-            badge.innerText = "🍔 进食窗口 (8小时)";
-            badge.style.background = "#e3f9e5";
-            badge.style.color = "#34c759";
-            btn.innerText = "结束进食，开始断食";
-            btn.className = "danger";
-            
-            // 计算进食结束目标时间 (上次操作 + 8小时)
-            if(dietData.lastActionTime) {
-                const target = new Date(dietData.lastActionTime + 8 * 60 * 60 * 1000);
-                targetText.innerText = `建议结束时间: ${formatTime(target)}`;
+/* ================= 图片处理 ================= */
+const fileToImage = async (file) => {
+    const url = URL.createObjectURL(file);
+    const img = new Image();
+    img.decoding = 'async';
+    img.src = url;
+    try {
+        await new Promise((res, rej) => {
+            img.onload = () => res();
+            img.onerror = () => rej(new Error("image load failed"));
+        });
+        return { img, url };
+    } catch (e) {
+        URL.revokeObjectURL(url);
+        throw e;
+    }
+};
+const canvasToBlob = (canvas, quality) =>
+    new Promise((res) => canvas.toBlob(res, 'image/jpeg', quality));
+const compressImageSmart = async (file, opts = {}) => {
+    const maxSideStart = opts.maxSideStart ?? 1024;
+    const minSide = opts.minSide ?? 600;
+    const qStart = opts.qStart ?? 0.7;
+    const qMin = opts.qMin ?? 0.4;
+    const targetBytes = opts.targetBytes ?? (180 * 1024);
+    const { img, url } = await fileToImage(file);
+    try {
+        const w0 = img.naturalWidth || img.width;
+        const h0 = img.naturalHeight || img.height;
+        let maxSide = maxSideStart;
+        let quality = qStart;
+        let best = null;
+        for (let attempt = 0; attempt < 8; attempt++) {
+            let nw = w0, nh = h0;
+            const scale = Math.min(1, maxSide / Math.max(w0, h0));
+            nw = Math.round(w0 * scale);
+            nh = Math.round(h0 * scale);
+            const canvas = document.createElement('canvas');
+            canvas.width = nw;
+            canvas.height = nh;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0, nw, nh);
+            const blob = await canvasToBlob(canvas, quality);
+            if (!blob) throw new Error("toBlob failed");
+            if (!best || blob.size < best.size) best = blob;
+            if (blob.size <= targetBytes) {
+                return { blob, ok: true, size: blob.size };
             }
-        } else {
-            // 断食中
-            badge.innerText = "🔥 正在断食 (16小时)";
-            badge.style.background = "#fff0f0";
-            badge.style.color = "#ff3b30";
-            btn.innerText = "开始进食";
-            btn.className = "success";
-
-            // 计算断食结束目标时间 (上次操作 + 16小时)
-            if(dietData.lastActionTime) {
-                const target = new Date(dietData.lastActionTime + 16 * 60 * 60 * 1000);
-                targetText.innerText = `断食目标达成: ${formatTime(target)}`;
+            if (quality > qMin) {
+                quality = Math.max(qMin, quality - 0.1);
+            } else if (maxSide > minSide) {
+                maxSide = Math.max(minSide, Math.round(maxSide * 0.8));
+                quality = qStart;
             } else {
-                targetText.innerText = "准备开始第一次断食";
+                break;
             }
         }
+        return { blob: best, ok: false, size: best?.size ?? 0 };
+    } finally {
+        URL.revokeObjectURL(url);
+    }
+};
+const blobToBase64Raw = (blob) => {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+            const s = String(reader.result || "");
+            const idx = s.indexOf(',');
+            resolve(idx >= 0 ? s.slice(idx + 1) : s);
+        };
+        reader.onerror = reject;
+        reader.readAsDataURL(blob);
+    });
+};
+const base64ToDataUrl = (b64) => b64 ? `data:image/jpeg;base64,${b64}` : "";
 
-        // 渲染历史记录
-        const list = $('#historyList');
-        if (dietData.history.length === 0) {
-            list.innerHTML = '<li class="history-item" style="color:#999;">暂无记录</li>';
+/* ================= UI 渲染 ================= */
+const syncToggleUI = () => {
+    const on = !!prefs.mealMediaEnabled;
+    const a = $('toggleMealMedia');
+    const b = $('toggleMealMedia2');
+    if (a) a.classList.toggle('on', on);
+    if (b) b.classList.toggle('on', on);
+};
+
+const renderUI = () => {
+    ensureToday();
+    $$('.tab').forEach(t => t.classList.toggle('active', +t.dataset.mode === state.mode));
+    $('waterCount').innerText = state.water;
+    if (state.weight !== null && state.weight !== undefined && state.weight !== '') $('weightInput').value = state.weight;
+    $('noteInput').value = state.note || '';
+    
+    const bStart = $('btnStartFast');
+    const bEnd = $('btnEndFast');
+    const badge = $('statusBadge');
+    const ring = $('progressRing');
+    
+    bStart.className = 'meal-card';
+    bEnd.className = 'meal-card';
+    ring.style.stroke = 'url(#gradientMain)';
+    
+    // 更新 Deadline Chip
+    const chip = $('deadlineChip');
+    if(state.startTime) {
+         const eatMs = MODES[state.mode].eat * 3600000;
+         const deadline = state.startTime + eatMs;
+         const now = Date.now();
+         const endStr = fmtTime(deadline);
+         chip.style.display = 'inline-flex';
+         chip.innerText = ` ⏳  最晚可进食至：${endStr}`;
+         chip.classList.remove('ok', 'over');
+         if (deadline - now >= 0) chip.classList.add('ok');
+         else chip.classList.add('over');
+    } else {
+        chip.style.display = 'none';
+    }
+
+    // 更新 Media Badges
+    const sBadge = $('mediaBadgeStart');
+    const eBadge = $('mediaBadgeEnd');
+    const hasS = !!(state.startMeal?.imageBase64 || (state.startMeal?.note && state.startMeal.note.trim()));
+    const hasE = !!(state.endMeal?.imageBase64 || (state.endMeal?.note && state.endMeal.note.trim()));
+    sBadge.style.display = hasS ? 'inline-block' : 'none';
+    eBadge.style.display = hasE ? 'inline-block' : 'none';
+
+    const startStr = fmtTime(state.startTime);
+    const endStr = fmtTime(state.endTime);
+
+    if (!state.startTime) {
+        $('statusText').innerText = '空腹期';
+        badge.className = 'status-badge fasting';
+        $('timerHint').style.display = 'none';
+        bStart.classList.add('active');
+        $('startLabel').innerText = '点击开始打卡';
+        $('endLabel').innerText = '等待开始';
+    } else if (!state.endTime) {
+        $('statusText').innerText = '进食窗口';
+        badge.className = 'status-badge eating';
+        ring.style.stroke = 'url(#gradientSuccess)';
+        bStart.classList.add('done');
+        $('startLabel').innerText = '开始于 ' + startStr;
+        bEnd.classList.add('active');
+        $('endLabel').innerText = '点击最后一餐打卡';
+    } else {
+        $('statusText').innerText = '禁食期';
+        badge.className = 'status-badge fasting';
+        bStart.classList.add('done');
+        $('startLabel').innerText = startStr;
+        bEnd.classList.add('done');
+        $('endLabel').innerText = endStr;
+    }
+    calcStats();
+    renderChart();
+    renderWeekList();
+    updateTimer();
+};
+
+const updateTimer = () => {
+    const ring = $('progressRing');
+    const circum = 722;
+    if (!state.startTime) {
+        ring.style.strokeDashoffset = circum;
+        $('timerDisplay').innerText = '--:--';
+        $('timerLabel').innerText = '等待打卡';
+        $('timerHint').style.display = 'none';
+        return;
+    }
+    const now = Date.now();
+    let percent = 0;
+    let display = "";
+    let label = "";
+    let hint = "";
+    
+    if (!state.endTime) {
+        const eatDur = MODES[state.mode].eat * 3600000;
+        const end = state.startTime + eatDur;
+        const left = end - now;
+        const passed = now - state.startTime;
+        if (left > 0) {
+            percent = Math.min(1, Math.max(0, passed / eatDur));
+            display = msToHMS(left);
+            label = '距离窗口关闭';
+            hint = `最晚可进食至 ${fmtTime(end)}`;
+            $('timerHint').style.display = 'inline-flex';
+            $('statusBadge').classList.remove('warn');
         } else {
-            list.innerHTML = dietData.history.slice(0, 5).map(item => {
-                const date = new Date(item.time);
-                const timeStr = formatTime(date);
-                const dateStr = `${date.getMonth()+1}/${date.getDate()}`;
-                const label = item.type === 'start' ? '开始进食' : '开始断食';
-                const color = item.type === 'start' ? 'green' : 'red';
-                return `<li class="history-item">
-                    <span>${dateStr} ${timeStr}</span>
-                    <span style="color:${color}; font-weight:bold;">${label}</span>
-                </li>`;
-            }).join('');
+            percent = 1;
+            display = "00:00:00";
+            label = "已超时";
+            hint = `已超过窗口关闭时间 ${fmtTime(end)}`;
+            $('timerHint').style.display = 'inline-flex';
+            $('statusBadge').classList.add('warn');
+        }
+    } else {
+        const fastDur = MODES[state.mode].fast * 3600000;
+        const nextEat = state.endTime + fastDur;
+        const left = nextEat - now;
+        const passed = now - state.endTime;
+        percent = Math.min(1, Math.max(0, passed / fastDur));
+        if (left > 0) {
+            display = msToHMS(left);
+            label = '距离可进食';
+            hint = `预计可进食于 ${fmtTime(nextEat)}`;
+            $('timerHint').style.display = 'inline-flex';
+            $('statusBadge').classList.remove('warn');
+        } else {
+            display = msToHMS(-left);
+            label = '已达到禁食目标';
+            hint = `你已可进食（从 ${fmtTime(nextEat)} 起）`;
+            $('timerHint').style.display = 'inline-flex';
+            $('statusBadge').classList.remove('warn');
         }
     }
+    $('timerDisplay').innerText = display;
+    $('timerLabel').innerText = label;
+    $('timerHintText').innerText = hint;
+    ring.style.strokeDashoffset = circum - (percent * circum);
+};
 
-    // 计时器 (每秒刷新)
-    setInterval(() => {
-        if (!dietData.lastActionTime) return;
-        
-        const now = new Date().getTime();
-        const diff = now - dietData.lastActionTime; // 已经过了多久
-        
-        // 格式化为 HH:MM:SS
-        const h = Math.floor(diff / 3600000);
-        const m = Math.floor((diff % 3600000) / 60000);
-        const s = Math.floor((diff % 60000) / 1000);
-        
-        $('#timerDisplay').innerText = 
-            `${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
-    }, 1000);
-
-    // 辅助工具
-    const $ = s => document.querySelector(s);
-    const formatTime = date => `${date.getHours().toString().padStart(2,'0')}:${date.getMinutes().toString().padStart(2,'0')}`;
-
-    window.toggleTheme = () => {
-        const html = document.documentElement;
-        html.setAttribute('data-theme', html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+/* ================= 统计 & 图表 ================= */
+const isCompleted = (rec) => !!(rec && rec.startTime && rec.endTime);
+const calcStats = () => {
+    // 简单统计逻辑，基于 dayMap
+    const keys = Object.keys(dayMap);
+    const totalCompleted = keys.filter(k => isCompleted(dayMap[k])).length;
+    let streak = 0;
+    for (let i = 0; i < 365; i++) {
+        const d = new Date();
+        d.setDate(d.getDate() - i);
+        const k = dateKeyLocal(d);
+        if (isCompleted(dayMap[k])) streak++;
+        else break;
     }
+    $('statStreak').innerText = streak;
+    $('statTotal').innerText = totalCompleted;
+    $('statRate').innerText = keys.length > 0 ? Math.round((totalCompleted / keys.length) * 100) + '%' : '0%';
+};
 
-    // 启动
-    initAuth();
+const renderChart = () => {
+    const container = $('weekChart');
+    container.innerHTML = '';
+    const daysCN = ['日','一','二','三','四','五','六'];
+    for (let i = 6; i >= 0; i--) {
+        const d = new Date();
+        d.setDate(d.getDate() - i);
+        const key = dateKeyLocal(d);
+        const isToday = i === 0;
+        const rec = dayMap[key];
+        let filled = false;
+        let height = '6px';
+        if (isToday) {
+            if (state.endTime) { filled = true; height = '80%'; }
+            else if (state.startTime) { height = '40%'; }
+        } else if (rec) {
+            if (isCompleted(rec)) { filled = true; height = '60%'; }
+            else if (rec.startTime && !rec.endTime) { height = '30%'; }
+        }
+        const div = document.createElement('div');
+        div.className = 'chart-bar-wrap';
+        div.innerHTML = `
+            <div class="chart-bar ${filled?'filled':''} ${isToday && !filled ? 'current':''}" style="height:${height}"></div>
+            <span class="chart-day" style="${isToday?'color:var(--primary)':''}">${daysCN[d.getDay()]}</span>
+        `;
+        div.onclick = () => { toggleWeek(true); showDayDetail(key); };
+        container.appendChild(div);
+    }
+};
 
+const renderWeekList = () => {
+    const list = $('weekList');
+    if (!list) return;
+    list.innerHTML = '';
+    for (let i = 0; i < 7; i++) {
+        const d = new Date();
+        d.setDate(d.getDate() - i);
+        const key = dateKeyLocal(d);
+        const rec = dayMap[key] || { dateKey: key };
+        const ok = isCompleted(rec);
+        const running = !!(rec.startTime && !rec.endTime);
+        let pillCls = 'pill miss';
+        let pillText = '未完成';
+        if (ok) { pillCls = 'pill ok'; pillText = '已完成'; }
+        else if (running) { pillCls = 'pill run'; pillText = '进行中'; }
+        
+        const media = (rec.startMeal?.imageBase64 || rec.endMeal?.imageBase64 || (rec.startMeal?.note && rec.startMeal.note.trim()) || (rec.endMeal?.note && rec.endMeal.note.trim()));
+        const mediaTag = media ? ' · 含餐图/留言' : '';
+        const sub = ok
+            ? `第一餐 ${fmtTime(rec.startTime)} · 最后一餐 ${fmtTime(rec.endTime)}${mediaTag}`
+            : running
+            ? `第一餐 ${fmtTime(rec.startTime)} · 等待最后一餐${mediaTag}`
+            : (rec.note && rec.note.trim() ? `有资料备注${mediaTag}` : (media ? `有餐图/留言` : `暂无记录`));
+            
+        const el = document.createElement('div');
+        el.className = 'week-item';
+        el.innerHTML = `
+            <div class="week-left">
+                <div class="week-date">${key === state.dateKey ? '今天' : fmtDateCN(key)}</div>
+                <div class="week-sub">${sub}</div>
+            </div>
+            <div class="${pillCls}">${pillText}</div>
+        `;
+        el.onclick = () => showDayDetail(key);
+        list.appendChild(el);
+    }
+};
+
+const showDayDetail = (key) => {
+    const box = $('dayDetail');
+    box.style.display = 'block';
+    const rec = dayMap[key];
+    $('detailTitle').innerText = (key === state.dateKey ? '今天' : fmtDateCN(key)) + ' · 详情';
+    
+    if (!rec) {
+        // ... 清空显示 (略微简化代码，逻辑同前)
+        $('d_mode').innerText = '—';
+        $('d_start').innerText = '—';
+        $('d_end').innerText = '—';
+        $('d_eatwin').innerText = '—';
+        $('d_water').innerText = '—';
+        $('d_weight').innerText = '—';
+        $('d_note').innerText = '—';
+        $('d_s_time').innerText = '—';
+        $('d_e_time').innerText = '—';
+        $('d_s_img').querySelector('img').src=''; $('d_s_img').style.display='none';
+        $('d_e_img').querySelector('img').src=''; $('d_e_img').style.display='none';
+        $('d_s_note').innerText = '—';
+        $('d_e_note').innerText = '—';
+        $('d_sync').innerText = '无记录';
+        return;
+    }
+    // ... 填充数据
+    const mode = rec.mode ?? 16;
+    const eatH = MODES[mode]?.eat ?? 8;
+    const fastH = MODES[mode]?.fast ?? 16;
+    $('d_mode').innerText = `${mode}:${24-mode}`;
+    $('d_start').innerText = rec.startTime ? fmtTime(rec.startTime) : '—';
+    $('d_end').innerText = rec.endTime ? fmtTime(rec.endTime) : '—';
+    $('d_eatwin').innerText = `进食 ${eatH}h · 禁食 ${fastH}h`;
+    $('d_water').innerText = (rec.water ?? 0) + ' 杯';
+    $('d_weight').innerText = (rec.weight ?? '—');
+    $('d_note').innerText = (rec.note || '—');
+    
+    $('d_s_time').innerText = rec.startTime ? `打卡 ${fmtTime(rec.startTime)}` : '—';
+    if(rec.startMeal?.imageBase64) {
+        $('d_s_img').style.display='block';
+        $('d_s_img').querySelector('img').src = base64ToDataUrl(rec.startMeal.imageBase64);
+    } else { $('d_s_img').style.display='none'; }
+    $('d_s_note').innerText = rec.startMeal?.note || '—';
+
+    $('d_e_time').innerText = rec.endTime ? `打卡 ${fmtTime(rec.endTime)}` : '—';
+    if(rec.endMeal?.imageBase64) {
+        $('d_e_img').style.display='block';
+        $('d_e_img').querySelector('img').src = base64ToDataUrl(rec.endMeal.imageBase64);
+    } else { $('d_e_img').style.display='none'; }
+    $('d_e_note').innerText = rec.endMeal?.note || '—';
+    
+    $('d_sync').innerText = `最后更新：${new Date(rec.updatedAt || 0).toLocaleString()}`;
+};
+
+/* ================= 打卡 & 图片弹窗逻辑 (保留原逻辑) ================= */
+let pendingMealWhich = null;
+let pendingFile = null;
+let pendingPreviewURL = null;
+
+const openMealSheet = (which) => {
+    pendingMealWhich = which;
+    pendingFile = null;
+    if(pendingPreviewURL) URL.revokeObjectURL(pendingPreviewURL);
+    pendingPreviewURL = null;
+    $('mealMsgInput').value = '';
+    $('mealImgPreview').style.display = 'none';
+    const isStart = which === 'start';
+    $('mealSheetTitle').innerText = isStart ? ' 🍳  第一餐打卡' : ' 🌙  最后一餐打卡';
+    toggleMeal(true);
+};
+
+$('btnPickImg').onclick = () => $('mealImgInput').click();
+$('mealImgInput').addEventListener('change', (e) => {
+    const f = e.target.files && e.target.files[0];
+    if (!f) return;
+    pendingFile = f;
+    if (pendingPreviewURL) URL.revokeObjectURL(pendingPreviewURL);
+    pendingPreviewURL = URL.createObjectURL(f);
+    $('mealImgPreview').querySelector('img').src = pendingPreviewURL;
+    $('mealImgPreview').style.display = 'block';
+});
+$('btnRemoveImg').onclick = () => {
+    pendingFile = null;
+    $('mealImgPreview').style.display = 'none';
+};
+
+const confirmMealWithMedia = async () => {
+    const which = pendingMealWhich;
+    if (!which) return;
+    btnLoading('mealConfirmBtn', true);
+    try {
+        ensureToday();
+        if (which === 'start') {
+            state.startTime = Date.now();
+            state.endTime = null;
+        } else {
+            state.endTime = Date.now();
+        }
+        
+        const msg = ($('mealMsgInput').value || '').trim();
+        let b64 = "";
+        
+        if (pendingFile) {
+            const res = await compressImageSmart(pendingFile);
+            if (res.blob) b64 = await blobToBase64Raw(res.blob);
+        }
+        
+        const mealData = { note: msg, imageBase64: b64 };
+        if (which === 'start') state.startMeal = mealData;
+        else state.endMeal = mealData;
+        
+        state.updatedAt = Date.now();
+        saveLocal();
+        renderUI();
+        toggleMeal(false);
+        showToast('打卡完成', '✅');
+        if(which === 'end') fireConfetti();
+        
+        await cloudSync();
+        
+    } catch(e) {
+        console.error(e);
+        showToast('打卡异常', '❌', 'error');
+    } finally {
+        btnLoading('mealConfirmBtn', false);
+    }
+};
+
+$('mealConfirmBtn').onclick = confirmMealWithMedia;
+$('mealSkipBtn').onclick = async () => {
+    pendingFile = null;
+    $('mealMsgInput').value = '';
+    await confirmMealWithMedia();
+};
+
+/* ================= Auth Logic (重构部分) ================= */
+// 切换 Auth Mode
+let isRegisterMode = false;
+const updateAuthUI = () => {
+    const title = isRegisterMode ? ' ☁️  注册新账号' : ' ☁️  登录账号';
+    const btnText = isRegisterMode ? '立即注册' : '登录 / 同步';
+    $('authTitle').innerText = title;
+    $('btnAuthText').innerText = btnText;
+    
+    $('tabLogin').classList.toggle('active', !isRegisterMode);
+    $('tabRegister').classList.toggle('active', isRegisterMode);
+};
+
+$('tabLogin').onclick = () => { isRegisterMode = false; updateAuthUI(); };
+$('tabRegister').onclick = () => { isRegisterMode = true; updateAuthUI(); };
+
+$('btnAuthAction').onclick = async () => {
+    const email = $('authEmail').value.trim();
+    const pwd = $('authPwd').value.trim();
+    if (!email || !pwd) return showToast('请填写完整', '⚠️', 'error');
+    if (pwd.length < 6) return showToast('密码需6位以上', '⚠️', 'error');
+
+    btnLoading('btnAuthAction', true);
+    
+    if (isRegisterMode) {
+        // 注册
+        const { error } = await supabase.auth.signUp({ email, password: pwd });
+        if (error) showToast('注册失败: ' + error.message, '❌', 'error');
+        else showToast('注册成功，已自动登录', '🎉');
+    } else {
+        // 登录
+        const { error } = await supabase.auth.signInWithPassword({ email, password: pwd });
+        if (error) showToast('登录失败: ' + error.message, '❌', 'error');
+        else showToast('登录成功', '✅');
+    }
+    btnLoading('btnAuthAction', false);
+};
+
+$('btnLogout').onclick = async () => {
+    await supabase.auth.signOut();
+    toggleAuth(false);
+    showToast('已退出登录', '👋');
+};
+
+$('btnForcePull').onclick = async () => {
+    if(!confirm('确定强制从云端覆盖本机数据？')) return;
+    await cloudPull(true);
+};
+
+// 监听 Auth 状态
+supabase.auth.onAuthStateChange((event, session) => {
+    currentUser = session?.user ?? null;
+    if (currentUser) {
+        $('authForm').style.display = 'none';
+        $('userPanel').style.display = 'block';
+        $('userEmailDisplay').innerText = currentUser.email;
+        // 登录后自动拉取数据
+        cloudPull();
+    } else {
+        $('authForm').style.display = 'block';
+        $('userPanel').style.display = 'none';
+    }
+});
+
+// 初始化
+const initTheme = () => {
+    const saved = localStorage.getItem('theme');
+    const sysDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    if (saved) document.documentElement.setAttribute('data-theme', saved);
+    else if (sysDark) document.documentElement.setAttribute('data-theme', 'dark');
+};
+initTheme();
+loadLocal();
+renderUI();
+
+$('themeBtn').onclick = () => {
+    const curr = document.documentElement.getAttribute('data-theme');
+    const next = curr === 'dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', next);
+    localStorage.setItem('theme', next);
+};
+$('userBtn').onclick = () => toggleAuth(true);
+$('authClose').onclick = () => toggleAuth(false);
+$('weekBtn').onclick = () => { toggleWeek(true); renderWeekList(); };
+$('weekClose').onclick = () => toggleWeek(false);
+$('viewMealClose').onclick = () => toggleViewMeal(false);
+$('viewMealOkBtn').onclick = () => toggleViewMeal(false);
+$('mealClose').onclick = () => toggleMeal(false);
+
+$('toggleMealMedia').onclick = () => { prefs.mealMediaEnabled = !prefs.mealMediaEnabled; saveLocal(); };
+$('toggleMealMedia2').onclick = $('toggleMealMedia').onclick;
+
+$('btnStartFast').onclick = () => {
+    ensureToday();
+    if(state.startTime) showSingleMealDetail('start'); // 已打卡看详情
+    else if(prefs.mealMediaEnabled) openMealSheet('start');
+    else { pendingMealWhich='start'; confirmMealWithMedia(); }
+};
+$('btnEndFast').onclick = () => {
+    ensureToday();
+    if(!state.startTime) return;
+    if(state.endTime) showSingleMealDetail('end');
+    else if(prefs.mealMediaEnabled) openMealSheet('end');
+    else { pendingMealWhich='end'; confirmMealWithMedia(); }
+};
+// 详情查看逻辑 (简化版)
+const showSingleMealDetail = (which) => {
+    const isStart = which === 'start';
+    const time = isStart ? state.startTime : state.endTime;
+    const data = isStart ? (state.startMeal || {}) : (state.endMeal || {});
+    if(!time) return;
+    $('viewMealTitle').innerText = isStart ? ' 🍳  第一餐详情' : ' 🌙  最后一餐详情';
+    $('viewMealTimeStr').innerText = fmtTime(time);
+    if(data.imageBase64) {
+        $('viewMealImgTag').src = base64ToDataUrl(data.imageBase64);
+        $('viewMealImgBox').style.display = 'block';
+        $('viewMealNoImg').style.display = 'none';
+    } else {
+        $('viewMealImgBox').style.display = 'none';
+        $('viewMealNoImg').style.display = 'block';
+    }
+    $('viewMealNoteStr').innerText = (data.note && data.note.trim()) ? data.note : '暂无留言';
+    toggleViewMeal(true);
+};
+
+// 饮水/体重/备注
+$('waterPlus').onclick = () => { ensureToday(); state.water++; saveLocal(); renderUI(); };
+$('waterMinus').onclick = () => { ensureToday(); if(state.water>0)state.water--; saveLocal(); renderUI(); };
+$('weightSaveBtn').onclick = () => { ensureToday(); state.weight=$('weightInput').value; saveLocal(); showToast('体重已记录'); };
+$('noteSaveBtn').onclick = () => { ensureToday(); state.note=$('noteInput').value.trim(); saveLocal(); showToast('资料已保存'); };
+$('resetBtn').onclick = () => {
+    if(confirm('重置今日所有记录？')) {
+        state.startTime=null; state.endTime=null; state.water=0; state.note=""; state.startMeal={}; state.endMeal={};
+        saveLocal(); renderUI(); cloudSync();
+        showToast('已重置');
+    }
+};
+
+setInterval(() => { ensureToday(); updateTimer(); }, 1000);
 </script>
 </body>
 </html>
