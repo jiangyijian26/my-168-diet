@@ -186,8 +186,9 @@
     // -----------------------------------------------------------
     import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 
-    // 这里填的是你刚才提供的项目信息
+    // 你的 Supabase URL
     const supabaseUrl = 'https://mjssiorvprbeuvdnbxkw.supabase.co'
+    // 你的 Supabase Key
     const supabaseKey = 'sb_publishable_0nfL1jDXViLVQUffJfKSFA_vSdCXrco'
     
     const supabase = createClient(supabaseUrl, supabaseKey)
@@ -233,19 +234,25 @@
     }
 
     // 挂载认证函数到 window
+    // -----------------------------------------------------------
+    // 修复重点：增加了 .trim() 去除手机输入法自动添加的空格
+    // -----------------------------------------------------------
     window.register = async () => {
-        const email = $('#email').value;
-        const password = $('#password').value;
-        if(!email || !password) return alert('请输入邮箱和密码');
+        const email = $('#email').value.trim(); // <--- 这里加了 trim()
+        const password = $('#password').value.trim(); // <--- 这里加了 trim()
         
+        if(!email || !password) return alert('请输入邮箱和密码');
+        if(!email.includes('@')) return alert('邮箱格式不正确，请检查');
+
         const { error } = await supabase.auth.signUp({ email, password });
         if(error) alert('注册失败: ' + error.message);
         else alert('注册成功！');
     }
 
     window.login = async () => {
-        const email = $('#email').value;
-        const password = $('#password').value;
+        const email = $('#email').value.trim(); // <--- 这里加了 trim()
+        const password = $('#password').value.trim(); // <--- 这里加了 trim()
+
         if(!email || !password) return alert('请输入邮箱和密码');
 
         const { error } = await supabase.auth.signInWithPassword({ email, password });
